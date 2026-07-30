@@ -3,6 +3,7 @@ import { habitService } from '../services/habitService';
 import { sendSuccess, sendCreated } from '../utils/apiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AuthRequest } from '../middlewares/auth';
+import { notify } from '../utils/notify';
 
 export const habitController = {
   getHabits: asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -18,6 +19,14 @@ export const habitController = {
   createHabit: asyncHandler(async (req: AuthRequest, res: Response) => {
     const habit = await habitService.createHabit(req.user!.userId, req.body);
     sendCreated(res, habit, 'Habit created');
+    notify({
+      userId: req.user!.userId,
+      type: 'habit_reminder',
+      title: 'New Habit Created 🎯',
+      message: `"${habit.title}" has been added to your habits.`,
+      actionUrl: '/habits',
+      app: req.app,
+    });
   }),
 
   updateHabit: asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -32,8 +41,20 @@ export const habitController = {
 
   logCompletion: asyncHandler(async (req: AuthRequest, res: Response) => {
     const { completed, duration, notes } = req.body;
-    const habit = await habitService.logCompletion(req.params.id as string, req.user!.userId, completed, duration, notes);
+    const habit = await habitService.logCompletion(
+      req.params.id as string, req.user!.userId, completed, duration, notes
+    );
     sendSuccess(res, habit, 'Completion logged');
+    if (completed) {
+      notify({
+        userId: req.user!.userId,
+        type: 'habit_reminder',
+        title: `🔥 Habit Completed!`,
+        message: `"${habit.title}" done! ${habit.streak > 1 ? `${habit.streak} day streak! 🔥` : 'Keep it up!'}`,
+        actionUrl: '/habits',
+        app: req.app,
+      });
+    }
   }),
 
   getMetrics: asyncHandler(async (req: AuthRequest, res: Response) => {

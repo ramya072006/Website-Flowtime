@@ -8,6 +8,9 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { useUIStore } from '@/stores/uiStore';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuthStore } from '@/stores/authStore';
+import { useNotificationStore } from '@/stores/notificationStore';
+import { useSocket } from '@/hooks/useSocket';
+import { useToast } from '@/hooks/useToast';
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -21,6 +24,46 @@ const pageTitles: Record<string, string> = {
   '/settings': 'Settings',
   '/ai': 'AI Assistant',
 };
+
+// ── Listens for real-time socket notifications and shows toast popups ─────────
+function NotificationListener() {
+  const socket = useSocket();
+  const { addNotification, fetchUnreadCount } = useNotificationStore();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNew = (notification: {
+      _id: string; type: string; title: string;
+      message: string; read: boolean; createdAt: string; actionUrl?: string;
+    }) => {
+      // Add to store
+      addNotification(notification);
+      fetchUnreadCount();
+
+      // Show toast popup
+      toast({
+        title: notification.title,
+        description: notification.message,
+        duration: 5000,
+      });
+
+      // Browser notification if permitted
+      if ('Notification' in window && window.Notification.permission === 'granted') {
+        new window.Notification(notification.title, {
+          body: notification.message,
+          icon: '/favicon.svg',
+        });
+      }
+    };
+
+    socket.on('notification:new', handleNew);
+    return () => { socket.off('notification:new', handleNew); };
+  }, [socket, addNotification, fetchUnreadCount, toast]);
+
+  return null;
+}
 
 export function AppLayout() {
   const location = useLocation();
@@ -72,6 +115,7 @@ export function AppLayout() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <Sidebar />
+      <NotificationListener />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header title={title} />

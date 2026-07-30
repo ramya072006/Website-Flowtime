@@ -8,11 +8,17 @@ export const setupSockets = (httpServer: HttpServer): SocketServer => {
   const io = new SocketServer(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || origin.startsWith('http://localhost:') || origin === config.clientUrl) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
+        if (!origin) return callback(null, true);
+        if (
+          origin.startsWith('http://localhost:') ||
+          origin.startsWith('http://127.0.0.1:') ||
+          origin === config.clientUrl ||
+          origin.endsWith('.netlify.app') ||
+          origin.endsWith('.onrender.com')
+        ) {
+          return callback(null, true);
         }
+        callback(new Error('Socket CORS: not allowed'));
       },
       methods: ['GET', 'POST'],
       credentials: true,
