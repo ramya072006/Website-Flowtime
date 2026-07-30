@@ -1,37 +1,27 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── Lazy transporter — created on first use so env vars are always loaded ─────
-let _transporter: nodemailer.Transporter | null | undefined = undefined;
+// ── Lazy Resend client ────────────────────────────────────────────────────────
+let _resend: Resend | null | undefined = undefined;
 
-const getTransporter = () => {
-  if (_transporter !== undefined) return _transporter;
-
-  const user = config.email.user;
-  const pass = config.email.pass;
-
-  if (!user || !pass) {
-    logger.warn('Email not configured — EMAIL_USER or EMAIL_PASS missing');
-    _transporter = null;
+const getClient = (): Resend | null => {
+  if (_resend !== undefined) return _resend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    logger.warn('RESEND_API_KEY not set — emails will not be sent');
+    _resend = null;
     return null;
   }
-
-  logger.info(`Creating SMTP transporter for ${user}`);
-
-  _transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // STARTTLS
-    auth: { user, pass },
-    tls: { rejectUnauthorized: false },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
-
-  return _transporter;
+  _resend = new Resend(key);
+  logger.info('Resend email client initialized');
+  return _resend;
 };
+
+// ── FROM address ──────────────────────────────────────────────────────────────
+// Until you verify a domain on Resend, use their sandbox address.
+// After verifying your domain, change this to: TaskManagement <noreply@yourdomain.com>
+const FROM = process.env.RESEND_FROM || 'TaskManagement <onboarding@resend.dev>';
 
 // ── Shared HTML wrapper ────────────────────────────────────────────────────────
 const wrap = (body: string) => `
@@ -50,25 +40,23 @@ const wrap = (body: string) => `
   </div>
 `;
 
-// ── Core send function ────────────────────────────────────────────────────────
-const send = async (to: string, subject: string, htmlBody: string): Promise<void> => {
-  const t = getTransporter();
-  if (!t) {
-    logger.warn(`Email skipped (no transporter) — to: ${to}, subject: ${subject}`);
-    logger.warn(`EMAIL_USER=${config.email.user ? 'SET' : 'MISSING'}, EMAIL_PASS=${config.email.pass ? 'SET' : 'MISSING'}`);
+// ── Core send ─────────────────────────────────────────────────────────────────
+const send = async (to: string, subject: string, html: string): Promise<void> => {
+  const client = getClient();
+  if (!client) {
+    logger.warn(`Email skipped — no Resend client. To: ${to}`);
     return;
   }
-  logger.info(`Attempting to send email to: ${to}`);
-  const info = await t.sendMail({
-    from: config.email.from || `TaskManagement <${config.email.user}>`,
-    to,
-    subject,
-    html: htmlBody,
-  });
-  logger.info(`Email sent — to: ${to}, messageId: ${info.messageId}`);
+  logger.info(`Sending email via Resend to: ${to}`);
+  const { data, error } = await client.emails.send({ from: FROM, to, subject, html });
+  if (error) {
+    logger.error(`Resend error for ${to}:`, error);
+    throw new Error(error.message);
+  }
+  logger.info(`Email sent — id: ${data?.id}, to: ${to}`);
 };
 
-// ── Public email methods ──────────────────────────────────────────────────────
+// ── Public methods ────────────────────────────────────────────────────────────
 export const emailService = {
   async sendOtpEmail(email: string, name: string, otp: string) {
     try {
@@ -108,12 +96,9 @@ export const emailService = {
             </a>
           </div>
           <p style="color:#6b7280;font-size:14px;">
-            This link expires in <strong>1 hour</strong>.
-            If you didn't request this, ignore this email.
+            This link expires in <strong>1 hour</strong>. If you didn't request this, ignore this email.
           </p>
-          <p style="color:#9ca3af;font-size:12px;word-break:break-all;">
-            Or copy: ${resetUrl}
-          </p>
+          <p style="color:#9ca3af;font-size:12px;word-break:break-all;">Or copy: ${resetUrl}</p>
         `)
       );
     } catch (err) {
@@ -130,7 +115,7 @@ export const emailService = {
           <h2 style="color:#111827;margin-top:0;">Password changed</h2>
           <p style="color:#374151;">Hi <strong>${name}</strong>, your password was successfully changed.</p>
           <p style="color:#374151;">
-            If you didn't do this, please
+            If you didn't do this,
             <a href="${config.clientUrl}/forgot-password" style="color:#6366f1;">reset your password immediately</a>.
           </p>
         `)
