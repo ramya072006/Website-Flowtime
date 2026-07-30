@@ -23,6 +23,10 @@ export const config = {
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
   },
+  resend: {
+    apiKey: process.env.RESEND_API_KEY || '',
+    from: process.env.RESEND_FROM || 'TaskManagement <onboarding@resend.dev>',
+  },
   redis: {
     uri: process.env.REDIS_URI || 'redis://localhost:6379',
   },
