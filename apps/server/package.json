@@ -6,6 +6,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "tsx src/scripts/seed.ts",
+    "wipe": "tsx src/scripts/wipe.ts",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
