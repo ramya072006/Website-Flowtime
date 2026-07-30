@@ -29,15 +29,18 @@ export function AnalyticsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [trendRes, allocationRes, reportRes] = await Promise.all([
+        const [trendRes, allocationRes, reportRes] = await Promise.allSettled([
           api.get('/analytics/productivity-trend?days=14'),
           api.get('/analytics/time-allocation'),
           api.get('/analytics/weekly-report'),
         ]);
         setData({
-          productivityTrend: trendRes.data.data,
-          timeAllocation: allocationRes.data.data,
-          weeklyReport: reportRes.data.data,
+          productivityTrend: trendRes.status === 'fulfilled' ? trendRes.value.data.data : [],
+          timeAllocation:    allocationRes.status === 'fulfilled' ? allocationRes.value.data.data : [],
+          weeklyReport:      reportRes.status === 'fulfilled' ? reportRes.value.data.data : {
+            totalFocusHours: 0, totalMeetingHours: 0, tasksCompleted: 0,
+            habitsCompleted: 0, productivityScore: 0, insights: [],
+          },
         });
       } catch (error) {
         console.error('Failed to fetch analytics:', error);

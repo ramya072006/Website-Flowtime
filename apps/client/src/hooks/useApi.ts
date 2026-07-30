@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { AxiosError } from 'axios';
-import { toast } from '@/hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 
 interface UseApiOptions {
   onSuccess?: (data: unknown) => void;
@@ -15,6 +15,7 @@ export function useApi<T>(
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const execute = useCallback(async (...args: unknown[]) => {
     setIsLoading(true);
@@ -37,6 +38,7 @@ export function useApi<T>(
     } finally {
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiCall, options.successMessage]);
 
   return { data, isLoading, error, execute };

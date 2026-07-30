@@ -16,6 +16,9 @@ export function Header({ title }: { title?: string }) {
 
   useEffect(() => {
     fetchUnreadCount();
+    // Poll every 30 seconds for new notifications
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
   }, [fetchUnreadCount]);
 
   const handleLogout = async () => {

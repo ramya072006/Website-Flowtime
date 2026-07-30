@@ -6,13 +6,12 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { AuthRequest } from '../middlewares/auth';
 
 const router = Router();
-
 router.use(authenticate as RequestHandler);
 
+// ── List notifications ────────────────────────────────────────────────────────
 router.get('/', asyncHandler(async (req: AuthRequest, res) => {
-  const { page = 1, limit = 20 } = req.query;
+  const { page = 1, limit = 50 } = req.query;
   const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-
   const [notifications, total] = await Promise.all([
     Notification.find({ userId: req.user!.userId })
       .sort({ createdAt: -1 })
@@ -21,30 +20,33 @@ router.get('/', asyncHandler(async (req: AuthRequest, res) => {
       .lean(),
     Notification.countDocuments({ userId: req.user!.userId }),
   ]);
-
-  sendSuccess(res, notifications, 'Notifications retrieved', 200, {
+  sendSuccess(res, notifications, 'OK', 200, {
     page: parseInt(page as string),
     limit: parseInt(limit as string),
     total,
     totalPages: Math.ceil(total / parseInt(limit as string)),
-    hasNext: skip + notifications.length < total,
-    hasPrev: parseInt(page as string) > 1,
   });
 }));
 
+// ── Unread count — MUST be before /:id ───────────────────────────────────────
 router.get('/unread-count', asyncHandler(async (req: AuthRequest, res) => {
   const count = await Notification.countDocuments({ userId: req.user!.userId, read: false });
   sendSuccess(res, { count });
 }));
 
-router.patch('/:id/read', asyncHandler(async (req: AuthRequest, res) => {
-  await Notification.findOneAndUpdate({ _id: req.params.id, userId: req.user!.userId }, { read: true });
-  sendSuccess(res, null, 'Marked as read');
-}));
-
+// ── Mark ALL read — MUST be before /:id ──────────────────────────────────────
 router.patch('/read-all', asyncHandler(async (req: AuthRequest, res) => {
   await Notification.updateMany({ userId: req.user!.userId, read: false }, { read: true });
   sendSuccess(res, null, 'All notifications marked as read');
+}));
+
+// ── Single notification ops ───────────────────────────────────────────────────
+router.patch('/:id/read', asyncHandler(async (req: AuthRequest, res) => {
+  await Notification.findOneAndUpdate(
+    { _id: req.params.id, userId: req.user!.userId },
+    { read: true }
+  );
+  sendSuccess(res, null, 'Marked as read');
 }));
 
 router.delete('/:id', asyncHandler(async (req: AuthRequest, res) => {
