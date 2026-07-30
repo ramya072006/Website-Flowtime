@@ -31,7 +31,6 @@ export const taskController = {
   createTask: asyncHandler(async (req: AuthRequest, res: Response) => {
     const task = await taskService.createTask(req.user!.userId, req.body);
     sendCreated(res, task, 'Task created');
-    // Notify
     notify({
       userId: req.user!.userId,
       type: 'task_scheduled',
@@ -39,7 +38,39 @@ export const taskController = {
       message: `"${task.title}" has been added to your tasks.`,
       actionUrl: '/tasks',
       app: req.app,
+      sendEmail: false,
     });
+    // If task has a due date, send a calendar invite
+    if (task.dueDate) {
+      setImmediate(async () => {
+        try {
+          const { User } = await import('../models/User');
+          const { emailService } = await import('../services/emailService');
+          const user = await User.findById(req.user!.userId).select('email name notificationSettings');
+          if (user && user.notificationSettings?.email !== false) {
+            const dueDate = new Date(task.dueDate!);
+            const endDate = new Date(dueDate.getTime() + (task.estimatedDuration || 30) * 60 * 1000);
+            await emailService.sendCalendarInvite(user.email, user.name, {
+              title: `Task Due: ${task.title}`,
+              description: task.description || `Priority: ${task.priority}`,
+              start: dueDate,
+              end: endDate,
+              url: `${req.protocol}://${req.get('host')}/tasks`,
+            });
+          }
+        } catch { /* ignore */ }
+      });
+    } else {
+      // Just send regular notification email
+      notify({
+        userId: req.user!.userId,
+        type: 'task_scheduled',
+        title: 'Task Created',
+        message: `"${task.title}" has been added to your tasks.`,
+        actionUrl: '/tasks',
+        app: req.app,
+      });
+    }
   }),
 
   updateTask: asyncHandler(async (req: AuthRequest, res: Response) => {

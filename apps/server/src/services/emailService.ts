@@ -2,7 +2,7 @@ import sgMail from '@sendgrid/mail';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── SendGrid HTTPS API — works on Render free tier (no SMTP ports needed) ─────
+// ── SendGrid HTTPS API ────────────────────────────────────────────────────────
 let initialized = false;
 
 const getClient = (): boolean => {
@@ -18,7 +18,6 @@ const getClient = (): boolean => {
   return true;
 };
 
-// Sender — must be a verified sender in your SendGrid account
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'ramyasribalivada@gmail.com';
 const FROM_NAME  = 'TaskManagement';
 
@@ -39,8 +38,16 @@ const wrap = (body: string) => `
   </div>
 `;
 
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
 // ── Core send ─────────────────────────────────────────────────────────────────
-const send = async (to: string, subject: string, html: string): Promise<void> => {
+const send = async (
+  to: string,
+  subject: string,
+  html: string,
+  attachments?: Array<{ content: string; filename: string; type: string; disposition: string }>
+): Promise<void> => {
   if (!getClient()) {
     logger.warn(`Email skipped — SendGrid not configured. To: ${to}`);
     return;
@@ -51,9 +58,29 @@ const send = async (to: string, subject: string, html: string): Promise<void> =>
     from: { email: FROM_EMAIL, name: FROM_NAME },
     subject,
     html,
+    ...(attachments ? { attachments } : {}),
   });
   logger.info(`Email sent via SendGrid to: ${to}`);
 };
+
+// ── Build Google Calendar quick-add URL ───────────────────────────────────────
+function buildGoogleCalUrl(event: {
+  title: string; description?: string; location?: string;
+  start: Date; end: Date; allDay?: boolean;
+}): string {
+  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const dates = event.allDay
+    ? `${fmt(event.start).slice(0, 8)}/${fmt(event.end).slice(0, 8)}`
+    : `${fmt(event.start)}/${fmt(event.end)}`;
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates,
+    ...(event.description ? { details: event.description } : {}),
+    ...(event.location ? { location: event.location } : {}),
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
 
 // ── Public methods ────────────────────────────────────────────────────────────
 export const emailService = {
@@ -124,15 +151,100 @@ export const emailService = {
     }
   },
 
-  // Accepts pre-built HTML body (from notify.ts) or falls back to wrapping plain text
   async sendNotificationEmail(email: string, subject: string, htmlBody: string) {
     try {
-      // If htmlBody already contains HTML tags, wrap it in the template
-      // Otherwise treat as plain text
       const isHtml = htmlBody.trim().startsWith('<');
       await send(email, subject, isHtml ? wrap(htmlBody) : wrap(`<p style="color:#374151;">${htmlBody}</p>`));
     } catch (err) {
       logger.error('sendNotificationEmail failed:', err);
+    }
+  },
+
+  /**
+   * Send a calendar invite with .ics attachment + Google Calendar quick-add link.
+   * The .ics file sets a 15-min reminder automatically.
+   */
+  async sendCalendarInvite(
+    email: string,
+    name: string,
+    event: {
+      title: string;
+      description?: string;
+      location?: string;
+      start: Date;
+      end: Date;
+      allDay?: boolean;
+      url?: string;
+    }
+  ) {
+    try {
+      const { buildICS } = await import('../utils/icsBuilder');
+      const icsContent = buildICS({
+        ...event,
+        organizer: { name: FROM_NAME, email: FROM_EMAIL },
+        reminderMinutes: 15,
+      });
+
+      const startStr = event.allDay
+        ? event.start.toDateString()
+        : event.start.toLocaleString('en-US', {
+            weekday: 'short', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit',
+          });
+      const endStr = event.allDay
+        ? ''
+        : ` – ${event.end.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+
+      const googleUrl = buildGoogleCalUrl(event);
+      const viewUrl = event.url || `${config.clientUrl}/calendar`;
+
+      await send(
+        email,
+        `📅 Calendar Invite: ${event.title}`,
+        wrap(`
+          <h2 style="color:#111827;margin-top:0;">New Event: ${escapeHtml(event.title)}</h2>
+          <p style="color:#374151;">Hi <strong>${escapeHtml(name)}</strong>, a new event has been scheduled for you.</p>
+
+          <div style="background:#f3f4f6;border-radius:8px;padding:20px;margin:16px 0;">
+            <table style="border-collapse:collapse;width:100%;">
+              <tr><td style="padding:4px 0;color:#6b7280;width:80px;">📅 When</td>
+                  <td style="padding:4px 0;color:#111827;font-weight:500;">${escapeHtml(startStr)}${endStr}</td></tr>
+              ${event.location ? `<tr><td style="padding:4px 0;color:#6b7280;">📍 Where</td>
+                  <td style="padding:4px 0;color:#111827;">${escapeHtml(event.location)}</td></tr>` : ''}
+              ${event.description ? `<tr><td style="padding:4px 0;color:#6b7280;vertical-align:top;">📝 Notes</td>
+                  <td style="padding:4px 0;color:#111827;">${escapeHtml(event.description)}</td></tr>` : ''}
+            </table>
+          </div>
+
+          <div style="margin:24px 0;">
+            <a href="${googleUrl}"
+               style="background:#4285f4;color:white;padding:12px 20px;text-decoration:none;
+                      border-radius:8px;display:inline-block;font-weight:600;font-size:14px;margin-right:12px;">
+              + Add to Google Calendar
+            </a>
+            <a href="${viewUrl}"
+               style="background:#6366f1;color:white;padding:12px 20px;text-decoration:none;
+                      border-radius:8px;display:inline-block;font-weight:600;font-size:14px;">
+              View in App
+            </a>
+          </div>
+
+          <p style="color:#6b7280;font-size:13px;">
+            A <strong>calendar file (.ics)</strong> is also attached — open it to add this event to
+            Google Calendar, Outlook, or Apple Calendar. A <strong>15-minute reminder</strong> is set automatically.
+          </p>
+        `),
+        [
+          {
+            content: Buffer.from(icsContent).toString('base64'),
+            filename: 'event.ics',
+            type: 'text/calendar',
+            disposition: 'attachment',
+          },
+        ]
+      );
+    } catch (err) {
+      logger.error('sendCalendarInvite failed:', err);
     }
   },
 };
