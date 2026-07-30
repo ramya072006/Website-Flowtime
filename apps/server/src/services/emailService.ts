@@ -21,8 +21,8 @@ const getTransporter = (): nodemailer.Transporter | null => {
   logger.info(`Creating Brevo SMTP transporter for ${user}`);
   _transporter = nodemailer.createTransport({
     host: 'smtp-relay.brevo.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: { user, pass },
     tls: { rejectUnauthorized: false },
     connectionTimeout: 15000,
