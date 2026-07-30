@@ -1,31 +1,41 @@
-import * as Brevo from '@getbrevo/brevo';
+import nodemailer from 'nodemailer';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── Lazy Brevo client ─────────────────────────────────────────────────────────
-let _client: Brevo.TransactionalEmailsApi | null | undefined = undefined;
+// ── Lazy transporter using Brevo SMTP relay ───────────────────────────────────
+// Brevo SMTP (smtp-relay.brevo.com:587) is NOT blocked by Render unlike Gmail
+let _transporter: nodemailer.Transporter | null | undefined = undefined;
 
-const getClient = (): Brevo.TransactionalEmailsApi | null => {
-  if (_client !== undefined) return _client;
+const getTransporter = (): nodemailer.Transporter | null => {
+  if (_transporter !== undefined) return _transporter;
 
-  const key = process.env.BREVO_API_KEY;
-  if (!key) {
-    logger.warn('BREVO_API_KEY not set — emails will not be sent');
-    _client = null;
+  const user = process.env.BREVO_SMTP_USER;   // your Brevo login email
+  const pass = process.env.BREVO_SMTP_KEY;    // the xsmtpsib-... key
+
+  if (!user || !pass) {
+    logger.warn('BREVO_SMTP_USER or BREVO_SMTP_KEY not set — emails will not be sent');
+    _transporter = null;
     return null;
   }
 
-  const api = new Brevo.TransactionalEmailsApi();
-  api.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, key);
-  _client = api;
-  logger.info('Brevo email client initialized');
-  return _client;
+  logger.info(`Creating Brevo SMTP transporter for ${user}`);
+  _transporter = nodemailer.createTransport({
+    host: 'smtp-relay.brevo.com',
+    port: 587,
+    secure: false,
+    auth: { user, pass },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
+  });
+  return _transporter;
 };
 
-const SENDER_NAME = 'TaskManagement';
-const SENDER_EMAIL = process.env.BREVO_FROM_EMAIL || 'ramyasribalivada@gmail.com';
+const FROM_NAME  = 'TaskManagement';
+const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'ramyasribalivada@gmail.com';
 
-// ── Shared HTML wrapper ────────────────────────────────────────────────────────
+// ── HTML wrapper ──────────────────────────────────────────────────────────────
 const wrap = (body: string) => `
   <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;
               background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
@@ -43,23 +53,20 @@ const wrap = (body: string) => `
 `;
 
 // ── Core send ─────────────────────────────────────────────────────────────────
-const send = async (to: string, subject: string, htmlContent: string): Promise<void> => {
-  const client = getClient();
-  if (!client) {
-    logger.warn(`Email skipped — no Brevo client. To: ${to}`);
+const send = async (to: string, subject: string, html: string): Promise<void> => {
+  const t = getTransporter();
+  if (!t) {
+    logger.warn(`Email skipped — no transporter. To: ${to}`);
     return;
   }
-
-  logger.info(`Sending email via Brevo to: ${to}`);
-
-  const email = new Brevo.SendSmtpEmail();
-  email.sender = { name: SENDER_NAME, email: SENDER_EMAIL };
-  email.to = [{ email: to }];
-  email.subject = subject;
-  email.htmlContent = htmlContent;
-
-  const result = await client.sendTransacEmail(email);
-  logger.info(`Email sent — messageId: ${(result.body as { messageId?: string })?.messageId}, to: ${to}`);
+  logger.info(`Sending email to: ${to}`);
+  const info = await t.sendMail({
+    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
+    to,
+    subject,
+    html,
+  });
+  logger.info(`Email sent — messageId: ${info.messageId}, to: ${to}`);
 };
 
 // ── Public methods ────────────────────────────────────────────────────────────
