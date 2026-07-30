@@ -27,12 +27,12 @@ const html = (body: string) => `
   <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto;
               background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
     <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 32px 40px;">
-      <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">⚡ FlowTime</h1>
+      <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">✅ TaskManagement</h1>
     </div>
     <div style="padding: 32px 40px;">${body}</div>
     <div style="padding: 16px 40px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
       <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-        You received this email because you have a FlowTime account. If you didn't request this, ignore it.
+        You received this email because you have a TaskManagement account. If you didn't request this, ignore it.
       </p>
     </div>
   </div>
@@ -66,7 +66,7 @@ export const emailService = {
       'Your FlowTime verification code',
       html(`
         <h2 style="color: #111827; margin-top: 0;">Verify your email</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, use the code below to verify your email address.</p>
+        <p style="color: #374151;">Hi <strong>${name}</strong>, use the code below to verify your TaskManagement email address.</p>
         <div style="background: #f3f4f6; border-radius: 8px; padding: 24px; text-align: center; margin: 24px 0;">
           <span style="font-size: 40px; font-weight: 800; letter-spacing: 12px; color: #6366f1;">${otp}</span>
         </div>
@@ -83,7 +83,7 @@ export const emailService = {
       'Reset your password',
       html(`
         <h2 style="color: #111827; margin-top: 0;">Reset your password</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, we received a request to reset your FlowTime password.</p>
+        <p style="color: #374151;">Hi <strong>${name}</strong>, we received a request to reset your TaskManagement password.</p>
         <div style="margin: 24px 0;">
           <a href="${resetUrl}"
              style="background: #6366f1; color: white; padding: 14px 28px; text-decoration: none;
@@ -104,7 +104,7 @@ export const emailService = {
       'Your password has been changed',
       html(`
         <h2 style="color: #111827; margin-top: 0;">Password changed</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, your FlowTime password was successfully changed.</p>
+        <p style="color: #374151;">Hi <strong>${name}</strong>, your TaskManagement password was successfully changed.</p>
         <p style="color: #374151;">If you didn't make this change, please <a href="${config.clientUrl}/forgot-password" style="color: #6366f1;">reset your password immediately</a>.</p>
       `)
     );
