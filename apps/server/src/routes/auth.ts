@@ -1,8 +1,29 @@
 import { Router, RequestHandler } from 'express';
 import { authController } from '../controllers/authController';
 import { authenticate } from '../middlewares/auth';
+import { emailService } from '../services/emailService';
+import { sendSuccess, sendError } from '../utils/apiResponse';
+import { config } from '../config';
+import { logger } from '../utils/logger';
 
 const router = Router();
+
+// ── TEST EMAIL ENDPOINT (remove after confirming email works) ─────────────────
+router.get('/test-email', async (req, res) => {
+  const to = (req.query.to as string) || config.email.user;
+  logger.info(`Test email requested to: ${to}`);
+  logger.info(`EMAIL_USER=${config.email.user || 'MISSING'}`);
+  logger.info(`EMAIL_PASS=${config.email.pass ? config.email.pass.slice(0,4) + '****' : 'MISSING'}`);
+  logger.info(`EMAIL_FROM=${config.email.from || 'MISSING'}`);
+  try {
+    await emailService.sendOtpEmail(to, 'Test User', '123456');
+    sendSuccess(res, { to, from: config.email.user }, 'Test email sent — check inbox and Render logs');
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error('Test email failed:', err);
+    sendError(res, `Email failed: ${message}`, 500);
+  }
+});
 
 // Public routes
 router.post('/register',         authController.register        as RequestHandler);

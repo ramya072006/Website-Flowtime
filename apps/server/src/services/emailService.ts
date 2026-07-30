@@ -55,8 +55,10 @@ const send = async (to: string, subject: string, htmlBody: string): Promise<void
   const t = getTransporter();
   if (!t) {
     logger.warn(`Email skipped (no transporter) — to: ${to}, subject: ${subject}`);
+    logger.warn(`EMAIL_USER=${config.email.user ? 'SET' : 'MISSING'}, EMAIL_PASS=${config.email.pass ? 'SET' : 'MISSING'}`);
     return;
   }
+  logger.info(`Attempting to send email to: ${to}`);
   const info = await t.sendMail({
     from: config.email.from || `TaskManagement <${config.email.user}>`,
     to,
