@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Zap, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Zap, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,33 +12,39 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [needsVerification, setNeedsVerification] = useState(false);
   const { login, isLoading } = useAuthStore();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setNeedsVerification(false);
     try {
       await login(email, password);
-      navigate('/dashboard');
-    } catch (error: unknown) {
-      const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
-      toast({ title: message, variant: 'destructive' });
-    }
-  };
+      navigate('/dashboard', { replace: true });
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
 
-  const fillDemo = () => {
-    setEmail('demo@flowtime.ai');
-    setPassword('Demo1234!');
+      if (status === 403 && msg.toLowerCase().includes('verify')) {
+        setNeedsVerification(true);
+        setError(msg);
+      } else {
+        setError(msg);
+        if (status === 423) {
+          toast({ title: msg, variant: 'destructive' });
+        }
+      }
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2">
@@ -51,6 +57,25 @@ export function LoginPage() {
         </div>
 
         <div className="bg-card rounded-2xl border border-border shadow-lg p-8">
+          {/* Error banner */}
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-destructive flex-1">
+                {error}
+                {needsVerification && (
+                  <button
+                    type="button"
+                    onClick={() => navigate('/verify-otp', { state: { email } })}
+                    className="ml-1 underline font-medium hover:no-underline"
+                  >
+                    Verify now →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -58,7 +83,7 @@ export function LoginPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setError(''); }}
                 placeholder="you@example.com"
                 required
                 autoComplete="email"
@@ -77,16 +102,13 @@ export function LoginPage() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setError(''); }}
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -94,27 +116,16 @@ export function LoginPage() {
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Signing in...
-                </>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Signing in...</>
               ) : (
                 'Sign in'
               )}
             </Button>
           </form>
 
-          <div className="mt-4">
-            <Button variant="outline" className="w-full" onClick={fillDemo}>
-              Try Demo Account
-            </Button>
-          </div>
-
           <p className="text-center text-sm text-muted-foreground mt-6">
             Don't have an account?{' '}
-            <Link to="/register" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
+            <Link to="/register" className="text-primary hover:underline font-medium">Sign up</Link>
           </p>
         </div>
       </motion.div>

@@ -48,10 +48,11 @@ interface AuthState {
   isLoading: boolean;
   isInitialized: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, confirmPassword?: string) => Promise<{ email: string }>;
   logout: () => Promise<void>;
   fetchMe: () => Promise<void>;
   initialize: () => Promise<void>;
+  setSession: (user: User, accessToken: string, refreshToken: string) => void;
   updateUser: (data: Partial<User>) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
 }
@@ -93,21 +94,13 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (name, email, password) => {
+      register: async (name, email, password, confirmPassword) => {
         set({ isLoading: true });
         try {
-          const response = await api.post('/auth/register', { name, email, password });
-          const { user, tokens } = response.data.data;
-          localStorage.setItem('accessToken', tokens.accessToken);
-          localStorage.setItem('refreshToken', tokens.refreshToken);
-          set({
-            user,
-            accessToken: tokens.accessToken,
-            refreshToken: tokens.refreshToken,
-            isAuthenticated: true,
-            isLoading: false,
-            isInitialized: true,
-          });
+          await api.post('/auth/register', { name, email, password, confirmPassword });
+          set({ isLoading: false });
+          // Registration succeeds → user must verify OTP before getting tokens
+          return { email };
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -179,6 +172,18 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           user: state.user ? { ...state.user, ...data } : null,
         }));
+      },
+
+      setSession: (user, accessToken, refreshToken) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        set({
+          user,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+          isInitialized: true,
+        });
       },
     }),
     {
