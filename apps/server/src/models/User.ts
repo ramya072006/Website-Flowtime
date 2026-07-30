@@ -141,9 +141,9 @@ const UserSchema = new Schema<IUser>(
     lockUntil: { type: Date },
     // Refresh tokens (array supports multiple devices)
     refreshTokens: { type: [String], select: false, default: [] },
-    // OAuth
-    googleId: { type: String, sparse: true },
-    microsoftId: { type: String, sparse: true },
+    // OAuth — sparse indexes defined below, not inline
+    googleId: { type: String },
+    microsoftId: { type: String },
     lastLogin: { type: Date },
     lastActive: { type: Date },
   },
@@ -154,6 +154,7 @@ const UserSchema = new Schema<IUser>(
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ status: 1 });
 UserSchema.index({ passwordResetExpires: 1 });
+// sparse indexes for optional OAuth fields — no duplicate declaration
 UserSchema.index({ googleId: 1 }, { sparse: true });
 UserSchema.index({ microsoftId: 1 }, { sparse: true });
 

@@ -1,39 +1,26 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── Lazy transporter using Brevo SMTP relay ───────────────────────────────────
-// Brevo SMTP (smtp-relay.brevo.com:587) is NOT blocked by Render unlike Gmail
-let _transporter: nodemailer.Transporter | null | undefined = undefined;
+// ── Lazy Resend client (HTTP API — works on Render free tier) ─────────────────
+let _resend: Resend | null | undefined = undefined;
 
-const getTransporter = (): nodemailer.Transporter | null => {
-  if (_transporter !== undefined) return _transporter;
-
-  const user = process.env.BREVO_SMTP_USER;   // your Brevo login email
-  const pass = process.env.BREVO_SMTP_KEY;    // the xsmtpsib-... key
-
-  if (!user || !pass) {
-    logger.warn('BREVO_SMTP_USER or BREVO_SMTP_KEY not set — emails will not be sent');
-    _transporter = null;
+const getClient = (): Resend | null => {
+  if (_resend !== undefined) return _resend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    logger.warn('RESEND_API_KEY not set — emails will not be sent');
+    _resend = null;
     return null;
   }
-
-  logger.info(`Creating Brevo SMTP transporter for ${user}`);
-  _transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 465,
-    secure: true,
-    auth: { user, pass },
-    tls: { rejectUnauthorized: false },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-  });
-  return _transporter;
+  _resend = new Resend(key);
+  logger.info('Resend client initialized');
+  return _resend;
 };
 
-const FROM_NAME  = 'TaskManagement';
-const FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'ramyasribalivada@gmail.com';
+// Use Resend's shared sender — works for ANY recipient on free plan
+// Once you verify a domain at resend.com/domains, change this to your own domain
+const FROM = 'TaskManagement <onboarding@resend.dev>';
 
 // ── HTML wrapper ──────────────────────────────────────────────────────────────
 const wrap = (body: string) => `
@@ -54,19 +41,18 @@ const wrap = (body: string) => `
 
 // ── Core send ─────────────────────────────────────────────────────────────────
 const send = async (to: string, subject: string, html: string): Promise<void> => {
-  const t = getTransporter();
-  if (!t) {
-    logger.warn(`Email skipped — no transporter. To: ${to}`);
+  const client = getClient();
+  if (!client) {
+    logger.warn(`Email skipped — no Resend client. To: ${to}`);
     return;
   }
-  logger.info(`Sending email to: ${to}`);
-  const info = await t.sendMail({
-    from: `"${FROM_NAME}" <${FROM_EMAIL}>`,
-    to,
-    subject,
-    html,
-  });
-  logger.info(`Email sent — messageId: ${info.messageId}, to: ${to}`);
+  logger.info(`Sending email via Resend to: ${to}`);
+  const { data, error } = await client.emails.send({ from: FROM, to, subject, html });
+  if (error) {
+    logger.error(`Resend error — to: ${to}, error: ${JSON.stringify(error)}`);
+    throw new Error(error.message);
+  }
+  logger.info(`Email sent — id: ${data?.id}, to: ${to}`);
 };
 
 // ── Public methods ────────────────────────────────────────────────────────────
