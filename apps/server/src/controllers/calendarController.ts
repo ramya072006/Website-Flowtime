@@ -6,6 +6,7 @@ import { AuthRequest } from '../middlewares/auth';
 import { notify } from '../utils/notify';
 import { User } from '../models/User';
 import { emailService } from '../services/emailService';
+import { config } from '../config';
 
 export const calendarController = {
   getCalendars: asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -35,7 +36,6 @@ export const calendarController = {
   createEvent: asyncHandler(async (req: AuthRequest, res: Response) => {
     const event = await calendarService.createEvent(req.user!.userId, req.body);
     sendCreated(res, event, 'Event created');
-    // In-app + push notification
     notify({
       userId: req.user!.userId,
       type: 'meeting_reminder',
@@ -43,12 +43,13 @@ export const calendarController = {
       message: `"${event.title}" has been added to your calendar.`,
       actionUrl: '/calendar',
       app: req.app,
-      sendEmail: false, // handled below with full calendar invite
+      sendEmail: false,
     });
-    // Send calendar invite email with .ics attachment
+    const userId = req.user!.userId;
+    const appUrl = `${config.clientUrl}/calendar`;
     setImmediate(async () => {
       try {
-        const user = await User.findById(req.user!.userId).select('email name notificationSettings');
+        const user = await User.findById(userId).select('email name notificationSettings');
         if (user && user.notificationSettings?.email !== false) {
           await emailService.sendCalendarInvite(user.email, user.name, {
             title: event.title,
@@ -57,7 +58,7 @@ export const calendarController = {
             start: new Date(event.start),
             end: new Date(event.end),
             allDay: event.allDay,
-            url: `${req.protocol}://${req.get('host')}/calendar`,
+            url: appUrl,
           });
         }
       } catch { /* ignore */ }

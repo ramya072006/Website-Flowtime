@@ -55,7 +55,7 @@ export const taskController = {
               description: task.description || `Priority: ${task.priority}`,
               start: dueDate,
               end: endDate,
-              url: `${req.protocol}://${req.get('host')}/tasks`,
+              url: `${config.clientUrl}/tasks`,
             });
           }
         } catch { /* ignore */ }
