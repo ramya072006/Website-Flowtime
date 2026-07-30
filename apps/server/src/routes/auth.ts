@@ -12,6 +12,7 @@ router.get('/test-email', async (req, res) => {
   const to = (req.query.to as string) || 'ramyasribalivada@gmail.com';
   logger.info(`Test email requested to: ${to}`);
   logger.info(`RESEND_API_KEY=${process.env.RESEND_API_KEY ? 'SET (' + process.env.RESEND_API_KEY.slice(0, 8) + '...)' : 'MISSING'}`);
+  logger.info(`BREVO_API_KEY=${process.env.BREVO_API_KEY ? 'SET' : 'MISSING'}`);
   try {
     await emailService.sendOtpEmail(to, 'Test User', '123456');
     sendSuccess(res, { to }, 'Test email sent — check inbox and Render logs');

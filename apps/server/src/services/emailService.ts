@@ -1,27 +1,29 @@
-import { Resend } from 'resend';
+import * as Brevo from '@getbrevo/brevo';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── Lazy Resend client ────────────────────────────────────────────────────────
-let _resend: Resend | null | undefined = undefined;
+// ── Lazy Brevo client ─────────────────────────────────────────────────────────
+let _client: Brevo.TransactionalEmailsApi | null | undefined = undefined;
 
-const getClient = (): Resend | null => {
-  if (_resend !== undefined) return _resend;
-  const key = process.env.RESEND_API_KEY;
+const getClient = (): Brevo.TransactionalEmailsApi | null => {
+  if (_client !== undefined) return _client;
+
+  const key = process.env.BREVO_API_KEY;
   if (!key) {
-    logger.warn('RESEND_API_KEY not set — emails will not be sent');
-    _resend = null;
+    logger.warn('BREVO_API_KEY not set — emails will not be sent');
+    _client = null;
     return null;
   }
-  _resend = new Resend(key);
-  logger.info('Resend email client initialized');
-  return _resend;
+
+  const api = new Brevo.TransactionalEmailsApi();
+  api.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, key);
+  _client = api;
+  logger.info('Brevo email client initialized');
+  return _client;
 };
 
-// ── FROM address ──────────────────────────────────────────────────────────────
-// Until you verify a domain on Resend, use their sandbox address.
-// After verifying your domain, change this to: TaskManagement <noreply@yourdomain.com>
-const FROM = process.env.RESEND_FROM || 'TaskManagement <onboarding@resend.dev>';
+const SENDER_NAME = 'TaskManagement';
+const SENDER_EMAIL = process.env.BREVO_FROM_EMAIL || 'ramyasribalivada@gmail.com';
 
 // ── Shared HTML wrapper ────────────────────────────────────────────────────────
 const wrap = (body: string) => `
@@ -41,19 +43,23 @@ const wrap = (body: string) => `
 `;
 
 // ── Core send ─────────────────────────────────────────────────────────────────
-const send = async (to: string, subject: string, html: string): Promise<void> => {
+const send = async (to: string, subject: string, htmlContent: string): Promise<void> => {
   const client = getClient();
   if (!client) {
-    logger.warn(`Email skipped — no Resend client. To: ${to}`);
+    logger.warn(`Email skipped — no Brevo client. To: ${to}`);
     return;
   }
-  logger.info(`Sending email via Resend to: ${to}`);
-  const { data, error } = await client.emails.send({ from: FROM, to, subject, html });
-  if (error) {
-    logger.error(`Resend error for ${to}:`, error);
-    throw new Error(error.message);
-  }
-  logger.info(`Email sent — id: ${data?.id}, to: ${to}`);
+
+  logger.info(`Sending email via Brevo to: ${to}`);
+
+  const email = new Brevo.SendSmtpEmail();
+  email.sender = { name: SENDER_NAME, email: SENDER_EMAIL };
+  email.to = [{ email: to }];
+  email.subject = subject;
+  email.htmlContent = htmlContent;
+
+  const result = await client.sendTransacEmail(email);
+  logger.info(`Email sent — messageId: ${(result.body as { messageId?: string })?.messageId}, to: ${to}`);
 };
 
 // ── Public methods ────────────────────────────────────────────────────────────
