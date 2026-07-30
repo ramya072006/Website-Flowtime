@@ -313,7 +313,7 @@ export function SettingsPage() {
                       const updated = {
                         aiSettings: {
                           autoSchedule: true, autoReschedule: true,
-                          learningEnabled: true, suggestionFrequency: 'medium',
+                          learningEnabled: true,
                           ...ai,
                           suggestionFrequency: e.target.value,
                         },
