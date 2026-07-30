@@ -4,6 +4,7 @@ import { sendSuccess, sendCreated, sendError } from '../utils/apiResponse';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AuthRequest } from '../middlewares/auth';
 import { notify } from '../utils/notify';
+import { config } from '../config';
 
 export const taskController = {
   getTasks: asyncHandler(async (req: AuthRequest, res: Response) => {
