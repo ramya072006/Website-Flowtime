@@ -124,9 +124,13 @@ export const emailService = {
     }
   },
 
-  async sendNotificationEmail(email: string, subject: string, message: string) {
+  // Accepts pre-built HTML body (from notify.ts) or falls back to wrapping plain text
+  async sendNotificationEmail(email: string, subject: string, htmlBody: string) {
     try {
-      await send(email, subject, wrap(`<p style="color:#374151;">${message}</p>`));
+      // If htmlBody already contains HTML tags, wrap it in the template
+      // Otherwise treat as plain text
+      const isHtml = htmlBody.trim().startsWith('<');
+      await send(email, subject, isHtml ? wrap(htmlBody) : wrap(`<p style="color:#374151;">${htmlBody}</p>`));
     } catch (err) {
       logger.error('sendNotificationEmail failed:', err);
     }
