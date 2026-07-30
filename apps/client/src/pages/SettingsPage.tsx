@@ -157,26 +157,54 @@ export function SettingsPage() {
 
   // ── Toggle notification setting ───────────────────────────────────────────
   const handleNotifToggle = async (key: string, value: boolean) => {
-    const updated = { notificationSettings: { ...user?.notificationSettings, [key]: value } };
-    updateUser(updated); // optimistic
+    const updated = {
+      notificationSettings: {
+        email: true, push: true, inApp: true,
+        reminderMinutes: [15, 60], deadlineAlerts: true, aiSuggestions: true,
+        ...user?.notificationSettings,
+        [key]: value,
+      },
+    };
+    updateUser(updated);
     try {
       const res = await api.patch('/auth/profile', updated);
       updateUser(res.data.data);
     } catch {
-      updateUser({ notificationSettings: { ...user?.notificationSettings, [key]: !value } }); // revert
+      updateUser({
+        notificationSettings: {
+          email: true, push: true, inApp: true,
+          reminderMinutes: [15, 60], deadlineAlerts: true, aiSuggestions: true,
+          ...user?.notificationSettings,
+          [key]: !value,
+        },
+      });
       toast({ title: 'Failed to save setting', variant: 'destructive' });
     }
   };
 
   // ── Toggle AI setting ─────────────────────────────────────────────────────
   const handleAiToggle = async (key: string, value: boolean) => {
-    const updated = { aiSettings: { ...user?.aiSettings, [key]: value } };
-    updateUser(updated); // optimistic
+    const updated = {
+      aiSettings: {
+        autoSchedule: true, autoReschedule: true,
+        learningEnabled: true, suggestionFrequency: 'medium',
+        ...user?.aiSettings,
+        [key]: value,
+      },
+    };
+    updateUser(updated);
     try {
       const res = await api.patch('/auth/profile', updated);
       updateUser(res.data.data);
     } catch {
-      updateUser({ aiSettings: { ...user?.aiSettings, [key]: !value } }); // revert
+      updateUser({
+        aiSettings: {
+          autoSchedule: true, autoReschedule: true,
+          learningEnabled: true, suggestionFrequency: 'medium',
+          ...user?.aiSettings,
+          [key]: !value,
+        },
+      });
       toast({ title: 'Failed to save setting', variant: 'destructive' });
     }
   };
@@ -282,7 +310,14 @@ export function SettingsPage() {
                   <select
                     value={ai?.suggestionFrequency || 'medium'}
                     onChange={async e => {
-                      const updated = { aiSettings: { ...ai, suggestionFrequency: e.target.value } };
+                      const updated = {
+                        aiSettings: {
+                          autoSchedule: true, autoReschedule: true,
+                          learningEnabled: true, suggestionFrequency: 'medium',
+                          ...ai,
+                          suggestionFrequency: e.target.value,
+                        },
+                      };
                       updateUser(updated);
                       try {
                         const res = await api.patch('/auth/profile', updated);
