@@ -2,119 +2,147 @@ import nodemailer from 'nodemailer';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
-// ── Transporter ───────────────────────────────────────────────────────────────
-const createTransporter = () => {
-  if (!config.email.user || !config.email.pass) {
-    logger.warn('Email not configured (SMTP_USER / SMTP_PASS missing)');
+// ── Lazy transporter — created on first use so env vars are always loaded ─────
+let _transporter: nodemailer.Transporter | null | undefined = undefined;
+
+const getTransporter = () => {
+  if (_transporter !== undefined) return _transporter;
+
+  const user = config.email.user;
+  const pass = config.email.pass;
+
+  if (!user || !pass) {
+    logger.warn('Email not configured — EMAIL_USER or EMAIL_PASS missing');
+    _transporter = null;
     return null;
   }
-  return nodemailer.createTransport({
-    host: config.email.host,   // smtp.gmail.com
-    port: config.email.port,   // 587
-    secure: false,             // STARTTLS
-    auth: {
-      user: config.email.user,
-      pass: config.email.pass, // Gmail App Password (16 chars, no spaces)
-    },
+
+  logger.info(`Creating SMTP transporter for ${user}`);
+
+  _transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // STARTTLS
+    auth: { user, pass },
     tls: { rejectUnauthorized: false },
-    connectionTimeout: 10000,  // 10s — fail fast instead of hanging
+    connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
   });
+
+  return _transporter;
 };
 
-const transporter = createTransporter();
-
-// ── Shared HTML wrapper ───────────────────────────────────────────────────────
-const html = (body: string) => `
-  <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto;
-              background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
-    <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 32px 40px;">
-      <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">✅ TaskManagement</h1>
+// ── Shared HTML wrapper ────────────────────────────────────────────────────────
+const wrap = (body: string) => `
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:560px;margin:0 auto;
+              background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px 40px;">
+      <h1 style="color:white;margin:0;font-size:24px;font-weight:700;">✅ TaskManagement</h1>
     </div>
-    <div style="padding: 32px 40px;">${body}</div>
-    <div style="padding: 16px 40px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
-      <p style="margin: 0; font-size: 12px; color: #9ca3af;">
-        You received this email because you have a TaskManagement account. If you didn't request this, ignore it.
+    <div style="padding:32px 40px;">${body}</div>
+    <div style="padding:16px 40px;background:#f9fafb;border-top:1px solid #e5e7eb;">
+      <p style="margin:0;font-size:12px;color:#9ca3af;">
+        You received this because you have a TaskManagement account.
+        If you didn't request this, you can safely ignore it.
       </p>
     </div>
   </div>
 `;
 
-const send = async (to: string, subject: string, htmlBody: string) => {
-  if (!transporter) {
-    logger.warn(`Email not sent to ${to} — transporter not configured`);
+// ── Core send function ────────────────────────────────────────────────────────
+const send = async (to: string, subject: string, htmlBody: string): Promise<void> => {
+  const t = getTransporter();
+  if (!t) {
+    logger.warn(`Email skipped (no transporter) — to: ${to}, subject: ${subject}`);
     return;
   }
-  try {
-    await transporter.sendMail({
-      from: config.email.from,
-      to,
-      subject,
-      html: htmlBody,
-    });
-    logger.info(`Email sent to ${to}: ${subject}`);
-  } catch (err) {
-    logger.error(`Failed to send email to ${to}:`, err);
-    throw err; // let callers handle if they want
-  }
+  const info = await t.sendMail({
+    from: config.email.from || `TaskManagement <${config.email.user}>`,
+    to,
+    subject,
+    html: htmlBody,
+  });
+  logger.info(`Email sent — to: ${to}, messageId: ${info.messageId}`);
 };
 
-// ── Public API ────────────────────────────────────────────────────────────────
+// ── Public email methods ──────────────────────────────────────────────────────
 export const emailService = {
-  /** Send 6-digit OTP for email verification */
   async sendOtpEmail(email: string, name: string, otp: string) {
-    await send(
-      email,
-      'Your FlowTime verification code',
-      html(`
-        <h2 style="color: #111827; margin-top: 0;">Verify your email</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, use the code below to verify your TaskManagement email address.</p>
-        <div style="background: #f3f4f6; border-radius: 8px; padding: 24px; text-align: center; margin: 24px 0;">
-          <span style="font-size: 40px; font-weight: 800; letter-spacing: 12px; color: #6366f1;">${otp}</span>
-        </div>
-        <p style="color: #6b7280; font-size: 14px;">This code expires in <strong>10 minutes</strong>. Do not share it with anyone.</p>
-      `)
-    );
+    try {
+      await send(
+        email,
+        'Your TaskManagement verification code',
+        wrap(`
+          <h2 style="color:#111827;margin-top:0;">Verify your email</h2>
+          <p style="color:#374151;">Hi <strong>${name}</strong>, use the code below to verify your email address.</p>
+          <div style="background:#f3f4f6;border-radius:8px;padding:24px;text-align:center;margin:24px 0;">
+            <span style="font-size:40px;font-weight:800;letter-spacing:12px;color:#6366f1;">${otp}</span>
+          </div>
+          <p style="color:#6b7280;font-size:14px;">
+            This code expires in <strong>10 minutes</strong>. Do not share it with anyone.
+          </p>
+        `)
+      );
+    } catch (err) {
+      logger.error('sendOtpEmail failed:', err);
+    }
   },
 
-  /** Send password reset link */
   async sendPasswordResetEmail(email: string, name: string, token: string) {
     const resetUrl = `${config.clientUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
-    await send(
-      email,
-      'Reset your password',
-      html(`
-        <h2 style="color: #111827; margin-top: 0;">Reset your password</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, we received a request to reset your TaskManagement password.</p>
-        <div style="margin: 24px 0;">
-          <a href="${resetUrl}"
-             style="background: #6366f1; color: white; padding: 14px 28px; text-decoration: none;
-                    border-radius: 8px; display: inline-block; font-weight: 600; font-size: 15px;">
-            Reset Password
-          </a>
-        </div>
-        <p style="color: #6b7280; font-size: 14px;">This link expires in <strong>1 hour</strong>. If you didn't request this, ignore this email — your password won't change.</p>
-        <p style="color: #9ca3af; font-size: 12px; word-break: break-all;">Or copy this link: ${resetUrl}</p>
-      `)
-    );
+    try {
+      await send(
+        email,
+        'Reset your TaskManagement password',
+        wrap(`
+          <h2 style="color:#111827;margin-top:0;">Reset your password</h2>
+          <p style="color:#374151;">Hi <strong>${name}</strong>, we received a request to reset your password.</p>
+          <div style="margin:24px 0;">
+            <a href="${resetUrl}"
+               style="background:#6366f1;color:white;padding:14px 28px;text-decoration:none;
+                      border-radius:8px;display:inline-block;font-weight:600;font-size:15px;">
+              Reset Password
+            </a>
+          </div>
+          <p style="color:#6b7280;font-size:14px;">
+            This link expires in <strong>1 hour</strong>.
+            If you didn't request this, ignore this email.
+          </p>
+          <p style="color:#9ca3af;font-size:12px;word-break:break-all;">
+            Or copy: ${resetUrl}
+          </p>
+        `)
+      );
+    } catch (err) {
+      logger.error('sendPasswordResetEmail failed:', err);
+    }
   },
 
-  /** Send password changed confirmation */
   async sendPasswordChangedEmail(email: string, name: string) {
-    await send(
-      email,
-      'Your password has been changed',
-      html(`
-        <h2 style="color: #111827; margin-top: 0;">Password changed</h2>
-        <p style="color: #374151;">Hi <strong>${name}</strong>, your TaskManagement password was successfully changed.</p>
-        <p style="color: #374151;">If you didn't make this change, please <a href="${config.clientUrl}/forgot-password" style="color: #6366f1;">reset your password immediately</a>.</p>
-      `)
-    );
+    try {
+      await send(
+        email,
+        'Your TaskManagement password was changed',
+        wrap(`
+          <h2 style="color:#111827;margin-top:0;">Password changed</h2>
+          <p style="color:#374151;">Hi <strong>${name}</strong>, your password was successfully changed.</p>
+          <p style="color:#374151;">
+            If you didn't do this, please
+            <a href="${config.clientUrl}/forgot-password" style="color:#6366f1;">reset your password immediately</a>.
+          </p>
+        `)
+      );
+    } catch (err) {
+      logger.error('sendPasswordChangedEmail failed:', err);
+    }
   },
 
-  /** Generic notification email */
   async sendNotificationEmail(email: string, subject: string, message: string) {
-    await send(email, subject, html(`<p style="color: #374151;">${message}</p>`)).catch(() => {});
+    try {
+      await send(email, subject, wrap(`<p style="color:#374151;">${message}</p>`));
+    } catch (err) {
+      logger.error('sendNotificationEmail failed:', err);
+    }
   },
 };
