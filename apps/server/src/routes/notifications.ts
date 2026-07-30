@@ -25,6 +25,8 @@ router.get('/', asyncHandler(async (req: AuthRequest, res) => {
     limit: parseInt(limit as string),
     total,
     totalPages: Math.ceil(total / parseInt(limit as string)),
+    hasNext: skip + notifications.length < total,
+    hasPrev: parseInt(page as string) > 1,
   });
 }));
 
