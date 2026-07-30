@@ -17,6 +17,9 @@ const createTransporter = () => {
       pass: config.email.pass, // Gmail App Password (16 chars, no spaces)
     },
     tls: { rejectUnauthorized: false },
+    connectionTimeout: 10000,  // 10s — fail fast instead of hanging
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 };
 

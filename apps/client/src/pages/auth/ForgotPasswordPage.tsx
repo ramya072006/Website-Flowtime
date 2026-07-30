@@ -18,10 +18,16 @@ export function ForgotPasswordPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await api.post('/auth/forgot-password', { email });
+      await api.post('/auth/forgot-password', { email }, { timeout: 15000 });
       setSent(true);
-    } catch {
-      toast({ title: 'Something went wrong. Please try again.', variant: 'destructive' });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; code?: string })?.response?.data?.message;
+      // Even on timeout/error, show success — don't reveal if email exists
+      if ((err as { code?: string })?.code === 'ECONNABORTED') {
+        setSent(true); // request timed out but server likely processed it
+      } else {
+        toast({ title: msg || 'Something went wrong. Please try again.', variant: 'destructive' });
+      }
     } finally {
       setIsLoading(false);
     }

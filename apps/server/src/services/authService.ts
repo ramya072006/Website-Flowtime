@@ -64,8 +64,10 @@ export const authService = {
       userId: user._id,
     });
 
-    // Send OTP email (non-blocking — don't fail registration if email fails)
-    emailService.sendOtpEmail(user.email, user.name, otp).catch(() => {});
+    // Send OTP email — fully non-blocking, never delay registration response
+    setImmediate(() => {
+      emailService.sendOtpEmail(user.email, user.name, otp).catch(() => {});
+    });
 
     return { userId: user._id.toString(), email: user.email };
   },
@@ -115,7 +117,10 @@ export const authService = {
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     await User.findByIdAndUpdate(user._id, { otpCode: otpHash, otpExpires });
-    await emailService.sendOtpEmail(user.email, user.name, otp);
+    // Non-blocking
+    setImmediate(() => {
+      emailService.sendOtpEmail(user.email, user.name, otp).catch(() => {});
+    });
   },
 
   // ── LOGIN ────────────────────────────────────────────────────────────────────
@@ -226,8 +231,10 @@ export const authService = {
       passwordResetExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
     });
 
-    // Non-blocking — don't throw if email fails (still return success to user)
-    await emailService.sendPasswordResetEmail(user.email, user.name, rawToken);
+    // Fully non-blocking — never await email, never throw from it
+    setImmediate(() => {
+      emailService.sendPasswordResetEmail(user.email, user.name, rawToken).catch(() => {});
+    });
   },
 
   // ── RESET PASSWORD ───────────────────────────────────────────────────────────
