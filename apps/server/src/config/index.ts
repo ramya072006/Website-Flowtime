@@ -37,7 +37,7 @@ export const config = {
     pass: process.env.EMAIL_PASS || '',
     from: process.env.EMAIL_FROM || 'FlowTime <noreply@flowtime.ai>',
   },
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: process.env.CLIENT_URL || 'https://taskmanagerflowtime.netlify.app',
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY || '',
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
