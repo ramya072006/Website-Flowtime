@@ -82,7 +82,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
-          <p className="text-sm text-muted-foreground">Loading FlowTime...</p>
+          <p className="text-sm text-muted-foreground">Loading TaskManagement...</p>
         </div>
       </div>
     );
