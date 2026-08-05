@@ -1,0 +1,372 @@
+name: 🚀 Deploy & E2E Test — FlowTime
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Override BASE_URL for Selenium tests'
+        required: false
+        default: ''
+      skip_tests:
+        description: 'Skip Selenium tests (deploy only)'
+        required: false
+        default: 'false'
+
+# Grant GITHUB_TOKEN permissions for Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+  BASE_URL: ${{ github.event.inputs.base_url || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STAGE 1–4: Build & Static Analysis
+  # ─────────────────────────────────────────────────────────────────────────────
+  build:
+    name: 🔨 Build Application
+    runs-on: ubuntu-latest
+    outputs:
+      build_status: ${{ steps.build_result.outputs.status }}
+    steps:
+      - name: '📥 Stage 1: Checkout Repository'
+        uses: actions/checkout@v4
+
+      - name: '📦 Stage 2: Setup Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: '📦 Stage 2: Install Root Dependencies'
+        run: npm ci --ignore-scripts
+
+      - name: '📦 Stage 2: Install Client Dependencies'
+        run: npm ci --ignore-scripts
+        working-directory: apps/client
+
+      - name: '📦 Stage 2: Install Packages/Types Dependencies'
+        run: |
+          if [ -f packages/types/package.json ]; then
+            cd packages/types && npm ci --ignore-scripts 2>/dev/null || true
+          fi
+
+      - name: '🔍 Stage 4: Static Analysis (ESLint)'
+        run: npm run lint 2>&1 || true
+        working-directory: apps/client
+        continue-on-error: true
+
+      - name: '🔨 Stage 3: Build Client Application'
+        id: build_step
+        run: npm run build
+        working-directory: apps/client
+        env:
+          # Inject the repo-name subdirectory so Vite sets the correct base path
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_APP_NAME: FlowTime
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.placeholder.com/api' }}
+          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL || 'https://api.placeholder.com' }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID || '' }}
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY || '' }}
+
+      - name: '✅ Build Result'
+        id: build_result
+        run: echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: '📤 Upload Build Artifact'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/client/dist
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STAGE 5: Deploy to GitHub Pages
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy:
+    name: '🌐 Stage 5: Deploy to GitHub Pages'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: '🚀 Deploy to GitHub Pages'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STAGE 6–7: Wait & Verify Deployment
+  # ─────────────────────────────────────────────────────────────────────────────
+  verify-deployment:
+    name: '🔍 Stage 6–7: Verify Deployment'
+    needs: deploy
+    runs-on: ubuntu-latest
+    outputs:
+      deployment_ok: ${{ steps.verify.outputs.ok }}
+      verified_url: ${{ steps.verify.outputs.url }}
+    steps:
+      - name: '⏳ Stage 6: Wait for CDN Propagation'
+        run: sleep 30
+
+      - name: '🔍 Stage 7: Verify Deployment Availability'
+        id: verify
+        run: |
+          BASE="${{ env.BASE_URL }}"
+          echo "Checking URL: $BASE"
+
+          MAX_ATTEMPTS=15
+          ATTEMPT=0
+          HTTP_CODE=0
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$BASE" || echo "000")
+            echo "Attempt $ATTEMPT/$MAX_ATTEMPTS — HTTP $HTTP_CODE"
+            if [ "$HTTP_CODE" = "200" ]; then
+              break
+            fi
+            sleep 20
+          done
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Deployment verification FAILED — HTTP $HTTP_CODE after $MAX_ATTEMPTS attempts"
+            echo "ok=false" >> $GITHUB_OUTPUT
+            echo "url=$BASE" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Verify HTML contains app root
+          BODY=$(curl -s --max-time 30 "$BASE")
+          if echo "$BODY" | grep -q 'id="root"'; then
+            echo "✅ App root element found"
+          else
+            echo "⚠️ App root element not found — checking anyway"
+          fi
+
+          echo "✅ Deployment verified successfully"
+          echo "ok=true" >> $GITHUB_OUTPUT
+          echo "url=$BASE" >> $GITHUB_OUTPUT
+
+      - name: '📋 Deployment Diagnostics (on failure)'
+        if: failure()
+        run: |
+          echo "=== DEPLOYMENT DIAGNOSTICS ==="
+          echo "Target URL: ${{ env.BASE_URL }}"
+          curl -v --max-time 30 "${{ env.BASE_URL }}" 2>&1 || true
+          echo "DNS Resolution:"
+          nslookup $(echo "${{ env.BASE_URL }}" | sed 's|https://||' | cut -d'/' -f1) || true
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STAGE 8–12: Selenium E2E Tests
+  # ─────────────────────────────────────────────────────────────────────────────
+  selenium-tests:
+    name: '🧪 Stage 8–12: Selenium E2E Tests'
+    needs: verify-deployment
+    if: ${{ needs.verify-deployment.outputs.deployment_ok == 'true' && github.event.inputs.skip_tests != 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test_suite:
+          - auth_authorization
+          - navigation_ui
+          - forms_crud
+          - validation_errors
+          - session_file
+          - accessibility_responsive
+          - performance_regression
+    steps:
+      - name: '📥 Checkout Repository'
+        uses: actions/checkout@v4
+
+      - name: '🐍 Setup Python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: '📦 Install Python Dependencies'
+        run: pip install -r automation/requirements.txt
+
+      - name: '🌐 Setup Chrome & ChromeDriver'
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: '🧪 Stage 8: Run Selenium Tests — ${{ matrix.test_suite }}'
+        id: run_tests
+        run: |
+          python automation/runner.py \
+            --suite ${{ matrix.test_suite }} \
+            --base-url "${{ env.BASE_URL }}" \
+            --headless \
+            --output automation/reports
+        env:
+          BASE_URL: ${{ env.BASE_URL }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL || 'test@flowtime-demo.com' }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD || 'TestPass123!' }}
+          CI: true
+        continue-on-error: true
+
+      - name: '📊 Stage 9: Generate HTML Report'
+        if: always()
+        run: |
+          python automation/utils/report_generator.py \
+            --suite ${{ matrix.test_suite }} \
+            --output automation/reports
+        continue-on-error: true
+
+      - name: '📊 Stage 10: Generate Excel Report'
+        if: always()
+        run: |
+          python automation/utils/excel_reporter.py \
+            --suite ${{ matrix.test_suite }} \
+            --output automation/reports
+        continue-on-error: true
+
+      - name: '📤 Stage 11: Upload Test Artifacts'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ matrix.test_suite }}
+          path: |
+            automation/reports/
+            automation/screenshots/
+            automation/logs/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # STAGE 11–13: Merge Artifacts + Summary
+  # ─────────────────────────────────────────────────────────────────────────────
+  finalize:
+    name: '📊 Stage 11–13: Reports, Summary & History'
+    needs: [deploy, verify-deployment, selenium-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: '📥 Checkout Repository'
+        uses: actions/checkout@v4
+
+      - name: '🐍 Setup Python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: '📦 Install Python Dependencies'
+        run: pip install -r automation/requirements.txt
+
+      - name: '📥 Download All Test Artifacts'
+        uses: actions/download-artifact@v4
+        with:
+          path: automation/all-artifacts
+          pattern: test-artifacts-*
+        continue-on-error: true
+
+      - name: '🔀 Merge Reports'
+        run: |
+          python automation/utils/merge_reports.py \
+            --input automation/all-artifacts \
+            --output automation/reports/merged
+        continue-on-error: true
+
+      - name: '📊 Generate Final Excel Reports'
+        run: |
+          python automation/utils/excel_reporter.py \
+            --merge \
+            --input automation/all-artifacts \
+            --output automation/reports/Excel
+        continue-on-error: true
+
+      - name: '📊 Generate Final HTML Dashboard'
+        run: |
+          python automation/utils/report_generator.py \
+            --final \
+            --input automation/all-artifacts \
+            --output automation/reports/HTML \
+            --base-url "${{ env.BASE_URL }}"
+        continue-on-error: true
+
+      - name: '📊 Generate Summary Markdown'
+        id: summary_gen
+        run: |
+          python automation/utils/summary_generator.py \
+            --input automation/all-artifacts \
+            --output automation/reports/Summary \
+            --base-url "${{ env.BASE_URL }}" \
+            --deployment-status "${{ needs.verify-deployment.outputs.deployment_ok }}" \
+            --run-id "${{ github.run_id }}" \
+            --repo "${{ github.repository }}" \
+            --timestamp "$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        continue-on-error: true
+
+      - name: '📋 Stage 12: Publish GitHub Actions Summary'
+        if: always()
+        run: |
+          if [ -f automation/reports/Summary/summary.md ]; then
+            cat automation/reports/Summary/summary.md >> $GITHUB_STEP_SUMMARY
+          else
+            cat >> $GITHUB_STEP_SUMMARY << 'SUMMARY_EOF'
+          ## 🚀 FlowTime — Live E2E Test Execution Summary
+
+          | Item | Value |
+          |------|-------|
+          | **Deployment URL** | ${{ env.BASE_URL }} |
+          | **Execution Date** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |
+          | **Workflow Run** | [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+          | **Deployment Status** | ${{ needs.verify-deployment.outputs.deployment_ok == 'true' && '✅ PASS' || '❌ FAIL' }} |
+          | **Build Status** | ${{ needs.build.result == 'success' && '✅ PASS' || '❌ FAIL' }} |
+
+          > Full reports available in workflow artifacts (retention: 30 days)
+          SUMMARY_EOF
+          fi
+
+      - name: '📤 Stage 11: Upload Final Consolidated Artifacts'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-test-reports-${{ github.run_number }}
+          path: |
+            automation/reports/
+          retention-days: 30
+
+      - name: '🗂️ Stage 13: Store Historical Results'
+        if: always()
+        run: |
+          python automation/utils/history_tracker.py \
+            --input automation/reports \
+            --run-id "${{ github.run_id }}" \
+            --run-number "${{ github.run_number }}" \
+            --branch "${{ github.ref_name }}" \
+            --timestamp "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        continue-on-error: true
+
+      - name: '📤 Upload Historical Results'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-results-run-${{ github.run_number }}
+          path: automation/reports/history/
+          retention-days: 30
+
+      - name: '✅ Stage 12: Final Pass/Fail Gate'
+        id: final_gate
+        run: |
+          python automation/utils/pass_fail_gate.py \
+            --input automation/all-artifacts \
+            --critical-threshold 5
+        continue-on-error: false
