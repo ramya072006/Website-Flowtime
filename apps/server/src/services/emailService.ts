@@ -58,6 +58,11 @@ const send = async (
     from: { email: FROM_EMAIL, name: FROM_NAME },
     subject,
     html,
+    replyTo: FROM_EMAIL,
+    headers: {
+      'X-Priority': '3',
+      'X-Mailer': 'TaskManagement App',
+    },
     ...(attachments ? { attachments } : {}),
   });
   logger.info(`Email sent via SendGrid to: ${to}`);
