@@ -119,7 +119,7 @@ def main():
     parser.add_argument('--input', default='automation/all-artifacts',
                         help='Directory containing test artifacts')
     parser.add_argument('--critical-threshold', type=float, default=5.0,
-                        help='Maximum allowed failure percentage (default: 5%)')
+                        help='Maximum allowed failure percentage (default: 5 percent)')
     parser.add_argument('--require-deployment', action='store_true', default=True,
                         help='Fail if deployment was not successful')
     args = parser.parse_args()

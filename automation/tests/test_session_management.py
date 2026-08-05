@@ -95,8 +95,8 @@ class TestSessionManagement(BaseTest):
         url = self.driver.current_url
         self.assertNotIn('/dashboard', url.split('?')[0])
 
-    def test_TC_SES_009_invalid_token_in_localstorage_redirects(self):
-        """Invalid/expired token in localStorage triggers redirect."""
+    def test_TC_SES_009_invalid_token_in_localstorage_does_not_grant_access(self):
+        """Invalid/expired token in localStorage does not grant dashboard access."""
         self.driver.get(routes.url('login'))
         time.sleep(1)
         self.driver.execute_script(
@@ -106,7 +106,7 @@ class TestSessionManagement(BaseTest):
         self.driver.get(routes.url('dashboard'))
         time.sleep(3)
         url = self.driver.current_url
-        # Should redirect to login since token is invalid
+        # Should not land on /dashboard since token is invalid
         self.assertNotIn('/dashboard', url.split('?')[0])
 
     def test_TC_SES_010_page_reload_clears_invalid_token(self):

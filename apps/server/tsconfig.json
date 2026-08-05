@@ -14,8 +14,7 @@
     "sourceMap": true,
     "paths": {
       "@flowtime/types": ["../../packages/types/src/index.ts"]
-    },
-    "baseUrl": "."
+    }
   },
   "include": ["src/**/*", "../../packages/types/src/**/*"],
   "exclude": ["node_modules", "dist"]
