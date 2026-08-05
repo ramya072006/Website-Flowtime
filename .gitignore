@@ -11,3 +11,16 @@ Thumbs.db
 coverage/
 .nyc_output/
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+automation/.env.test
+automation/reports/
+automation/screenshots/
+automation/logs/

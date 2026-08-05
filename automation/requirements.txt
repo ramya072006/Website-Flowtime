@@ -1,13 +1,33 @@
+# FlowTime Selenium Automation Framework — Python Dependencies
+# All versions pinned for reproducible CI builds
+
+# Core Selenium
 selenium==4.27.1
 webdriver-manager==4.0.2
+
+# Test Framework
 pytest==8.3.4
 pytest-xdist==3.6.1
 pytest-html==4.1.1
 pytest-rerunfailures==14.0
+
+# Excel Reporting
 openpyxl==3.1.5
+
+# Image / Screenshot
 Pillow==11.0.0
+
+# HTTP Requests (deployment verification helpers)
 requests==2.32.3
+
+# Environment config
 python-dotenv==1.0.1
+
+# HTML Report templating
 jinja2==3.1.4
+
+# Colored console logging
 colorlog==6.9.0
+
+# Process / performance utilities
 psutil==6.1.0
