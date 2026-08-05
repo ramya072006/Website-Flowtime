@@ -67,7 +67,7 @@ function NotificationListener() {
 
 export function AppLayout() {
   const location = useLocation();
-  const { theme, aiPanelOpen, commandPaletteOpen, toggleCommandPalette, toggleAIPanel } = useUIStore();
+  const { theme, aiPanelOpen, commandPaletteOpen, sidebarOpen, setSidebarOpen, toggleCommandPalette, toggleAIPanel } = useUIStore();
   const { fetchMe } = useAuthStore();
 
   const title = pageTitles[location.pathname] ||
@@ -93,12 +93,13 @@ export function AppLayout() {
       // Escape → close panels
       if (e.key === 'Escape') {
         if (commandPaletteOpen) toggleCommandPalette();
-        if (aiPanelOpen) toggleAIPanel();
+        else if (aiPanelOpen) toggleAIPanel();
+        else if (sidebarOpen) setSidebarOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [commandPaletteOpen, aiPanelOpen, toggleCommandPalette, toggleAIPanel]);
+  }, [commandPaletteOpen, aiPanelOpen, sidebarOpen, toggleCommandPalette, toggleAIPanel, setSidebarOpen]);
 
   useEffect(() => {
     const root = document.documentElement;

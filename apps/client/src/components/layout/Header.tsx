@@ -1,4 +1,4 @@
-import { Bell, Search, Sun, Moon, Laptop, Sparkles, LogOut } from 'lucide-react';
+import { Bell, Search, Sun, Moon, Laptop, Sparkles, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -7,10 +7,11 @@ import { useUIStore } from '@/stores/uiStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export function Header({ title }: { title?: string }) {
   const { user, logout } = useAuthStore();
-  const { theme, setTheme, toggleCommandPalette, toggleAIPanel } = useUIStore();
+  const { theme, setTheme, toggleCommandPalette, toggleAIPanel, sidebarOpen, toggleSidebar } = useUIStore();
   const { unreadCount, fetchUnreadCount } = useNotificationStore();
   const navigate = useNavigate();
 
@@ -35,8 +36,29 @@ export function Header({ title }: { title?: string }) {
   const ThemeIcon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Laptop;
 
   return (
-    <header className="h-16 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-6 sticky top-0 z-40">
+    <header className="h-16 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40">
       <div className="flex items-center gap-4">
+        {/* Hamburger Menu Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="relative"
+          aria-label="Toggle Navigation"
+        >
+          <motion.div
+            initial={false}
+            animate={{ rotate: sidebarOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {sidebarOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </motion.div>
+        </Button>
+
         {title && <h1 className="text-xl font-semibold">{title}</h1>}
       </div>
 
