@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.20.0
+**Version:** 2.21.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-docs: add API rate limiting documentation
+feat: add task search with filter by assignee and date
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
