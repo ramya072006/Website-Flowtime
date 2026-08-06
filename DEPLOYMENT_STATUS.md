@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.16.0
+**Version:** 2.17.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: auth token not cleared properly on forced logout
+refactor: move date utility functions to shared package
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
