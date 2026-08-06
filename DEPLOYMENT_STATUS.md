@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.28.0
+**Version:** 2.29.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: workspace settings save button loading state stuck
+chore: add automated dependency security audit
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
