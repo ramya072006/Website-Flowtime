@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.26.0
+**Version:** 1.27.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.6%
+**Coverage:** 94.7%
 
-## Latest: refactor: consolidate API error handling middleware
+## Latest: feat: add task dependency tracking and blocking visualization
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
