@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.21.0
+**Version:** 2.22.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: add task search with filter by assignee and date
+fix: calendar drag event snapping to 15 minute intervals
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
