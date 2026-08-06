@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.33.0
+**Version:** 1.34.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.3%
+**Coverage:** 94.4%
 
-## Latest: feat: email digest settings with custom frequency options
+## Latest: fix: mobile touch gesture conflicts in calendar scroll
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
