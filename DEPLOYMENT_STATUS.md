@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.15.0
+**Version:** 2.16.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: workspace activity feed with real-time updates
+fix: auth token not cleared properly on forced logout
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
