@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.19.0
+**Version:** 1.20.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.9%
+**Coverage:** 94.0%
 
-## Latest: fix: notification badge count not clearing after read
+## Latest: docs: add contributing guide and PR template
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
