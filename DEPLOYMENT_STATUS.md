@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.36.0
+**Version:** 1.37.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.6%
+**Coverage:** 94.7%
 
-## Latest: feat: add global search with keyboard navigation support
+## Latest: fix: workspace invite email template formatting issue
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
