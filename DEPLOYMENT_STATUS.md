@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.37.0
+**Version:** 2.38.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: team member invite pending status display bug
+chore: upgrade vite to latest for faster builds
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
