@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.15.0
+**Version:** 1.16.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.5%
+**Coverage:** 94.6%
 
-## Latest: feat: add analytics chart export to PNG functionality
+## Latest: fix: habit completion webhook not firing on edge cases
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
