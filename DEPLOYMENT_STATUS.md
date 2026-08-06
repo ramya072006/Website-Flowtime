@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.17.0
+**Version:** 1.18.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.7%
+**Coverage:** 94.8%
 
-## Latest: refactor: migrate auth store to use zustand v5 patterns
+## Latest: feat: add keyboard shortcut overlay for power users
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
