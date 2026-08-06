@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.20.0
+**Version:** 1.21.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.0%
+**Coverage:** 94.1%
 
-## Latest: docs: add contributing guide and PR template
+## Latest: feat: implement infinite scroll for task list pagination
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
