@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.13.0
+**Version:** 1.14.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.3%
+**Coverage:** 94.4%
 
-## Latest: fix: focus timer pause and resume state synchronization
+## Latest: chore: configure eslint rules for consistent code style
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
