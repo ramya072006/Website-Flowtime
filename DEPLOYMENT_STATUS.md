@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.1%
+**Coverage:** 94.2%
 
-## Latest: feat: implement task priority sorting in dashboard view
+## Latest: fix: resolve token refresh race condition on concurrent requests
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
