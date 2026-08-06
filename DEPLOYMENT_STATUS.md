@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.2.0
+**Version:** 2.3.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: prevent duplicate API calls on rapid button clicks
+feat: dashboard widget drag-and-drop customization
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
