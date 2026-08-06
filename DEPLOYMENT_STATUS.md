@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.18.0
+**Version:** 2.19.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: add bulk task actions select all and delete
+fix: notification preferences not saving correctly
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
