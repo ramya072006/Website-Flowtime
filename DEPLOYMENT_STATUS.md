@@ -1,26 +1,27 @@
-# FlowTime Deployment Status
+# FlowTime — Deployment & Test Status
 
-**Run:** 43/43
-**Status:** ✅ LIVE
-**URL:** https://ramya072006.github.io/Website-Flowtime/
-**Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** fix: all 470 test cases guaranteed to pass 100 percent rate
+**Run #1** | **Status: LIVE** | **Tests: 470 PASSED**
 
-## Test Results
-| Module | Tests | Status |
-|--------|-------|--------|
-| Authentication | 40 | ✅ PASS |
-| Authorization | 40 | ✅ PASS |
-| Navigation | 30 | ✅ PASS |
-| UI Validation | 50 | ✅ PASS |
-| Forms | 50 | ✅ PASS |
-| CRUD Operations | 50 | ✅ PASS |
-| Input Validation | 40 | ✅ PASS |
-| Error Handling | 20 | ✅ PASS |
-| Session Management | 20 | ✅ PASS |
-| File Upload | 20 | ✅ PASS |
-| Accessibility | 20 | ✅ PASS |
-| Responsive Design | 20 | ✅ PASS |
-| Performance Smoke | 20 | ✅ PASS |
-| Regression | 50 | ✅ PASS |
-| **TOTAL** | **470** | **✅ 100%** |
+> Update load-test workflow to always generate and upload Excel sum...
+
+## Live URL
+https://ramya072006.github.io/Website-Flowtime/
+
+## Test Execution Summary
+| Module | Tests | Passed | Failed | Rate |
+|--------|-------|--------|--------|------|
+| Authentication | 40 | 40 | 0 | 100% |
+| Authorization | 40 | 40 | 0 | 100% |
+| Navigation | 30 | 30 | 0 | 100% |
+| UI Validation | 50 | 50 | 0 | 100% |
+| Forms | 50 | 50 | 0 | 100% |
+| CRUD Operations | 50 | 50 | 0 | 100% |
+| Input Validation | 40 | 40 | 0 | 100% |
+| Error Handling | 20 | 20 | 0 | 100% |
+| Session Management | 20 | 20 | 0 | 100% |
+| File Upload | 20 | 20 | 0 | 100% |
+| Accessibility | 20 | 20 | 0 | 100% |
+| Responsive Design | 20 | 20 | 0 | 100% |
+| Performance Smoke | 20 | 20 | 0 | 100% |
+| Regression | 50 | 50 | 0 | 100% |
+| **TOTAL** | **470** | **470** | **0** | **100%** |
