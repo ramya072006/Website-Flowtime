@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.7.0
+**Version:** 1.8.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.7%
+**Coverage:** 94.8%
 
-## Latest: refactor: extract notification service into standalone module
+## Latest: fix: settings page tab navigation keyboard accessibility
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
