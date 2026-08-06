@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.25.0
+**Version:** 1.26.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.5%
+**Coverage:** 94.6%
 
-## Latest: fix: reset password link expiry validation improved
+## Latest: refactor: consolidate API error handling middleware
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
