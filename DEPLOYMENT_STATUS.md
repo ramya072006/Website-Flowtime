@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 21/43
+**Run:** 22/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** feat: add CRUD operations test suite (50 test cases)
+**Commit:** fix: pass fail gate threshold set to 95 percent
 
 ## Test Results
 | Module | Tests | Status |
