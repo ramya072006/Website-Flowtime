@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.9.0
+**Version:** 1.10.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.9%
+**Coverage:** 94.0%
 
-## Latest: feat: add AI-powered task scheduling recommendations
+## Latest: docs: update API documentation with new endpoint schemas
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
