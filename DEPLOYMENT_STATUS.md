@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.35.0
+**Version:** 1.36.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.5%
+**Coverage:** 94.6%
 
-## Latest: refactor: split large components into smaller composable units
+## Latest: feat: add global search with keyboard navigation support
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
