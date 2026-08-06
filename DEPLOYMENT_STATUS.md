@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.41.0
+**Version:** 2.42.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-refactor: centralize error boundary with better fallback
+feat: add accessibility audit report to CI pipeline
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
