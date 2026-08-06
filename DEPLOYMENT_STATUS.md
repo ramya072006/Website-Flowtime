@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.7.0
+**Version:** 2.8.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-refactor: simplify socket event handler registration
+fix: profile image not updating after successful upload
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
