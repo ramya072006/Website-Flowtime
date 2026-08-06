@@ -1,8 +1,8 @@
 # FlowTime — Deployment & Test Status
 
-**Run #5** | **Status: LIVE** | **Tests: 470 PASSED**
+**Run #6** | **Status: LIVE** | **Tests: 470 PASSED**
 
-> Add security workflow commit and include findings.xlsx
+> Fix deploy-and-test workflow conditional
 
 ## Live URL
 https://ramya072006.github.io/Website-Flowtime/
