@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.23.0
+**Version:** 2.24.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-chore: configure prettier for consistent formatting
+feat: add progress bar for habit monthly completion rate
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
