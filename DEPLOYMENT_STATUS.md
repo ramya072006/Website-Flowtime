@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 6/43
+**Run:** 7/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** docs: add test execution summary with pass rate metrics
+**Commit:** fix: deploy-and-test workflow conditional logic updated
 
 ## Test Results
 | Module | Tests | Status |
