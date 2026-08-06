@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.10.0
+**Version:** 1.11.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.0%
+**Coverage:** 94.1%
 
-## Latest: docs: update API documentation with new endpoint schemas
+## Latest: fix: sidebar collapse animation on mobile viewports
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
