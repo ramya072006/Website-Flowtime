@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.38.0
+**Version:** 1.39.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.8%
+**Coverage:** 94.9%
 
-## Latest: chore: add GitHub Actions cache for faster CI builds
+## Latest: feat: add task comment threading and mentions
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
