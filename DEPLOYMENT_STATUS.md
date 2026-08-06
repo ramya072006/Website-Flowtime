@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.38.0
+**Version:** 2.39.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-chore: upgrade vite to latest for faster builds
+feat: add custom workspace themes and branding options
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
