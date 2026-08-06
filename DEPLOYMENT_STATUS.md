@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.4.0
+**Version:** 2.5.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-chore: remove unused imports and dead code cleanup
+fix: date picker closes correctly on outside click
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
