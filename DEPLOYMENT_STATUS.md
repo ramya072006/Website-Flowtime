@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.8.0
+**Version:** 2.9.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: profile image not updating after successful upload
+feat: add recurring task schedule configuration UI
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
