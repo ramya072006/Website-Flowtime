@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.23.0
+**Version:** 1.24.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.3%
+**Coverage:** 94.4%
 
-## Latest: chore: add pre-commit hooks for lint and format checks
+## Latest: feat: add workspace analytics with productivity metrics
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
