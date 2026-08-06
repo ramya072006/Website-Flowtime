@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.39.0
+**Version:** 2.40.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: add custom workspace themes and branding options
+fix: task due date reminder not triggering correctly
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
