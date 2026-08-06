@@ -1,5 +1,13 @@
-# SPA fallback — serve index.html for all routes so React Router handles navigation
+[build]
+  base    = "apps/client"
+  command = "npx vite build"
+  publish = "apps/client/dist"
+
+[build.environment]
+  NODE_VERSION    = "20"
+  VITE_APP_NAME   = "FlowTime"
+
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from   = "/*"
+  to     = "/index.html"
   status = 200
