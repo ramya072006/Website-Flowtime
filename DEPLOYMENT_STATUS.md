@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.28.0
+**Version:** 1.29.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.8%
+**Coverage:** 94.9%
 
-## Latest: fix: calendar week view timezone offset calculation
+## Latest: chore: optimize production bundle with code splitting
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
