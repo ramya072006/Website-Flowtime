@@ -1,8 +1,8 @@
 # FlowTime — Deployment & Test Status
 
-**Run #7** | **Status: LIVE** | **Tests: 470 PASSED**
+**Run #8** | **Status: LIVE** | **Tests: 470 PASSED**
 
-> Fix deploy-and-test workflow conditional
+> Fix load-test failure accounting and push workflow updates
 
 ## Live URL
 https://ramya072006.github.io/Website-Flowtime/
