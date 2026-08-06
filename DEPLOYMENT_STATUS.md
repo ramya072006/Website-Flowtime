@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.3.0
+**Version:** 2.4.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: dashboard widget drag-and-drop customization
+chore: remove unused imports and dead code cleanup
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
