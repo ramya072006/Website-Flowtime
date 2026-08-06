@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 16/43
+**Run:** 17/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** feat: add session management test suite (20 tests)
+**Commit:** ci: update deploy-and-test to use npx vite build directly
 
 ## Test Results
 | Module | Tests | Status |
