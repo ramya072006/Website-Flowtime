@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 13/43
+**Run:** 14/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** ci: fix GitHub Pages base path for Vite production build
+**Commit:** feat: add performance smoke tests with Navigation Timing API
 
 ## Test Results
 | Module | Tests | Status |
