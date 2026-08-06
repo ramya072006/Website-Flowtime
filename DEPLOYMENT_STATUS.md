@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.11.0
+**Version:** 2.12.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: focus mode distraction blocker overlay z-index
+feat: add task label color picker with custom colors
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
