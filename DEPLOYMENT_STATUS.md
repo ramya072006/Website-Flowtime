@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.2.0
+**Version:** 1.3.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.2%
+**Coverage:** 94.3%
 
-## Latest: fix: resolve token refresh race condition on concurrent requests
+## Latest: feat: add habit streak tracking with visual progress indicator
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
