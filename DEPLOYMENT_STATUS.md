@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.3%
+**Coverage:** 94.4%
 
-## Latest: feat: add habit streak tracking with visual progress indicator
+## Latest: chore: upgrade dependencies to latest stable versions
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
