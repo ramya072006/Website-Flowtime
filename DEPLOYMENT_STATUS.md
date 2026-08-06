@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.31.0
+**Version:** 1.32.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.1%
+**Coverage:** 94.2%
 
-## Latest: fix: user avatar upload progress indicator display
+## Latest: docs: add deployment guide for self-hosted instances
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
