@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.32.0
+**Version:** 1.33.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.2%
+**Coverage:** 94.3%
 
-## Latest: docs: add deployment guide for self-hosted instances
+## Latest: feat: email digest settings with custom frequency options
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
