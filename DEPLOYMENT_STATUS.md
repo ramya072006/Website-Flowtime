@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.32.0
+**Version:** 2.33.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-docs: update README with feature screenshots
+feat: add focus session history and statistics page
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
