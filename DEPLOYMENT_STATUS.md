@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.5.0
+**Version:** 1.6.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.5%
+**Coverage:** 94.6%
 
-## Latest: fix: calendar event overlap detection and rendering fix
+## Latest: feat: add dark mode persistence across browser sessions
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
