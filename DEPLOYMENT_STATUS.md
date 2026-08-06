@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.33.0
+**Version:** 2.34.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: add focus session history and statistics page
+fix: sidebar active state not updating on route change
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
