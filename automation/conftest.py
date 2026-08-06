@@ -1,71 +1,23 @@
 """
-pytest conftest.py — FlowTime Selenium Automation Framework
-Provides CLI options and shared fixtures for pytest runs.
+FlowTime Selenium conftest.py
+Injects BASE_URL into environment before any test module is imported.
+Does NOT import Selenium — safe to run without a browser installed.
 """
 
 import os
-import pytest
+import sys
 
+# Ensure project root is on the path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-def pytest_addoption(parser):
-    """Add custom CLI options to pytest."""
-    parser.addoption(
-        '--base-url',
-        action='store',
-        default='',
-        help='Base URL for Selenium tests (must be live GitHub Pages URL)',
-    )
-    parser.addoption(
-        '--headless',
-        action='store_true',
-        default=True,
-        help='Run Chrome in headless mode',
-    )
-    parser.addoption(
-        '--suite',
-        action='store',
-        default='all',
-        help='Test suite name to run',
-    )
+# Set default BASE_URL if not already configured
+if not os.getenv('BASE_URL'):
+    owner = os.getenv('GITHUB_REPOSITORY_OWNER', '')
+    repo_full = os.getenv('GITHUB_REPOSITORY', '')
+    repo = repo_full.split('/')[-1] if '/' in repo_full else repo_full
+    if owner and repo:
+        os.environ['BASE_URL'] = f'https://{owner}.github.io/{repo}/'
+    else:
+        os.environ.setdefault('BASE_URL', 'https://ramya072006.github.io/Website-Flowtime/')
 
-
-def pytest_configure(config):
-    """Apply CLI options to environment before test collection."""
-    base_url = config.getoption('--base-url', default='', skip=True)
-    if base_url:
-        os.environ['BASE_URL'] = base_url.rstrip('/') + '/'
-
-    headless = config.getoption('--headless', default=True, skip=True)
-    if headless:
-        os.environ['HEADLESS'] = 'true'
-
-
-def pytest_collection_modifyitems(config, items):
-    """Add markers and deselect based on suite option."""
-    # Add default markers to all items
-    for item in items:
-        module_name = item.module.__name__ if hasattr(item, 'module') else ''
-        if 'authentication' in module_name or 'authorization' in module_name:
-            item.add_marker(pytest.mark.auth)
-        elif 'navigation' in module_name or 'ui_validation' in module_name:
-            item.add_marker(pytest.mark.navigation)
-        elif 'forms' in module_name or 'crud' in module_name:
-            item.add_marker(pytest.mark.forms)
-        elif 'regression' in module_name:
-            item.add_marker(pytest.mark.regression)
-        elif 'performance' in module_name:
-            item.add_marker(pytest.mark.performance)
-
-
-# Register custom markers
-def pytest_configure(config):
-    config.addinivalue_line('markers', 'auth: Authentication and Authorization tests')
-    config.addinivalue_line('markers', 'navigation: Navigation and UI tests')
-    config.addinivalue_line('markers', 'forms: Form interaction tests')
-    config.addinivalue_line('markers', 'regression: Regression test suite')
-    config.addinivalue_line('markers', 'performance: Performance smoke tests')
-    config.addinivalue_line('markers', 'critical: Critical priority tests')
-
-    base_url = config.getoption('--base-url', default='', skip=True)
-    if base_url:
-        os.environ['BASE_URL'] = base_url.rstrip('/') + '/'
+print(f"[conftest] BASE_URL = {os.environ.get('BASE_URL', 'NOT SET')}")
