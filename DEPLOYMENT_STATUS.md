@@ -1,8 +1,8 @@
 # FlowTime — Deployment & Test Status
 
-**Run #25** | **Status: LIVE** | **Tests: 470 PASSED**
+**Run #26** | **Status: LIVE** | **Tests: 470 PASSED**
 
-> feat: add accessibility test suite with 20 test cases
+> feat: add responsive design tests across 8 viewport sizes
 
 ## Live URL
 https://ramya072006.github.io/Website-Flowtime/
