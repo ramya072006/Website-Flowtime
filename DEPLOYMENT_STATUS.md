@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.4%
+**Coverage:** 94.5%
 
-## Latest: chore: upgrade dependencies to latest stable versions
+## Latest: fix: calendar event overlap detection and rendering fix
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
