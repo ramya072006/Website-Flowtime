@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 4/43
+**Run:** 5/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** ci: add 5 automated test jobs (vulnerability, unit, load, selenium)
+**Commit:** fix: update load-test workflow to always generate and upload Excel sum
 
 ## Test Results
 | Module | Tests | Status |
