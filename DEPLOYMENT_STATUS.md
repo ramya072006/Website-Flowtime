@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.6.0
+**Version:** 1.7.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.6%
+**Coverage:** 94.7%
 
-## Latest: feat: add dark mode persistence across browser sessions
+## Latest: refactor: extract notification service into standalone module
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
