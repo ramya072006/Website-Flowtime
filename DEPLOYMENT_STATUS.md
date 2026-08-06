@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.22.0
+**Version:** 2.23.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: calendar drag event snapping to 15 minute intervals
+chore: configure prettier for consistent formatting
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
