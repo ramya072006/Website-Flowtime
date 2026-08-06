@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.36.0
+**Version:** 2.37.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-feat: add quick task creation from keyboard shortcut
+fix: team member invite pending status display bug
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
