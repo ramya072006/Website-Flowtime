@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.34.0
+**Version:** 2.35.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: sidebar active state not updating on route change
+refactor: optimize re-renders in notification component
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
