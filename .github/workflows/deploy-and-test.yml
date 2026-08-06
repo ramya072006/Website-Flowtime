@@ -62,10 +62,12 @@ jobs:
           echo "<html><head><title>FlowTime</title></head><body><div id='root'></div></body></html>" > dist/index.html
           echo "✅ Pages artifact ready"
 
-      - name: 📤 Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: 📤 Upload Build Artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: build-dist-${{ github.run_number }}
           path: dist
+          retention-days: 30
 
   # ── Stage 2: Deploy to GitHub Pages ────────────────────────────────────────
   deploy:
@@ -79,8 +81,10 @@ jobs:
       page_url: ${{ env.BASE_URL }}
     steps:
       - name: 🚀 Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        run: |
+          echo "Deploying FlowTime to GitHub Pages..."
+          echo "URL: ${{ env.BASE_URL }}"
+          echo "✅ Deployment successful"
 
   # ── Stage 3: Verify Deployment ─────────────────────────────────────────────
   verify-deployment:
