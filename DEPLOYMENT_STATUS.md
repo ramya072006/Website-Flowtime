@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.24.0
+**Version:** 1.25.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.4%
+**Coverage:** 94.5%
 
-## Latest: feat: add workspace analytics with productivity metrics
+## Latest: fix: reset password link expiry validation improved
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
