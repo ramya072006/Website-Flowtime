@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.29.0
+**Version:** 1.30.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.9%
+**Coverage:** 94.0%
 
-## Latest: chore: optimize production bundle with code splitting
+## Latest: feat: add CSV export for task and habit data
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
