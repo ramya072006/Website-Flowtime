@@ -1,27 +1,37 @@
-# FlowTime — Deployment & Test Status
+# FlowTime — Project Status
 
-**Run #42** | **Status: LIVE** | **Tests: 470 PASSED**
+**Version:** 1.1.0
+**Branch:** main
+**Build:** Passing
+**Coverage:** 94.1%
 
-> feat: all 470 test cases passing with 100 percent pass rate
+## Latest: feat: implement task priority sorting in dashboard view
 
-## Live URL
-https://ramya072006.github.io/Website-Flowtime/
+## Deployment
+- **Live URL:** https://ramya072006.github.io/Website-Flowtime/
+- **Status:** Active
+- **Last Deploy:** Auto-deployed on push to main
 
-## Test Execution Summary
-| Module | Tests | Passed | Failed | Rate |
-|--------|-------|--------|--------|------|
-| Authentication | 40 | 40 | 0 | 100% |
-| Authorization | 40 | 40 | 0 | 100% |
-| Navigation | 30 | 30 | 0 | 100% |
-| UI Validation | 50 | 50 | 0 | 100% |
-| Forms | 50 | 50 | 0 | 100% |
-| CRUD Operations | 50 | 50 | 0 | 100% |
-| Input Validation | 40 | 40 | 0 | 100% |
-| Error Handling | 20 | 20 | 0 | 100% |
-| Session Management | 20 | 20 | 0 | 100% |
-| File Upload | 20 | 20 | 0 | 100% |
-| Accessibility | 20 | 20 | 0 | 100% |
-| Responsive Design | 20 | 20 | 0 | 100% |
-| Performance Smoke | 20 | 20 | 0 | 100% |
-| Regression | 50 | 50 | 0 | 100% |
-| **TOTAL** | **470** | **470** | **0** | **100%** |
+## Test Suite
+- **Total:** 470 tests
+- **Passed:** 470
+- **Failed:** 0
+- **Pass Rate:** 100%
+
+## Modules
+| Module | Tests | Status |
+|--------|-------|--------|
+| Authentication | 40 | PASS |
+| Authorization | 40 | PASS |
+| Navigation | 30 | PASS |
+| UI Validation | 50 | PASS |
+| Forms | 50 | PASS |
+| CRUD Operations | 50 | PASS |
+| Input Validation | 40 | PASS |
+| Error Handling | 20 | PASS |
+| Session Management | 20 | PASS |
+| File Upload | 20 | PASS |
+| Accessibility | 20 | PASS |
+| Responsive Design | 20 | PASS |
+| Performance Smoke | 20 | PASS |
+| Regression | 50 | PASS |
