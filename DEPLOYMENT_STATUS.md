@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.30.0
+**Version:** 1.31.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.0%
+**Coverage:** 94.1%
 
-## Latest: feat: add CSV export for task and habit data
+## Latest: fix: user avatar upload progress indicator display
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
