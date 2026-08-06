@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.31.0
+**Version:** 2.32.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: analytics chart tooltip positioning on mobile
+docs: update README with feature screenshots
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
