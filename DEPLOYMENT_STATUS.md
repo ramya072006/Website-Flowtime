@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.25.0
+**Version:** 2.26.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: email verification link broken for certain domains
+refactor: extract reusable modal component from dialogs
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
