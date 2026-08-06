@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.14.0
+**Version:** 1.15.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.4%
+**Coverage:** 94.5%
 
-## Latest: chore: configure eslint rules for consistent code style
+## Latest: feat: add analytics chart export to PNG functionality
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
