@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.29.0
+**Version:** 2.30.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-chore: add automated dependency security audit
+feat: pin important tasks to top of task list
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
