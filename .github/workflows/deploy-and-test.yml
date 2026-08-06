@@ -1,4 +1,4 @@
-name: 🚀 CI / CD Pipeline — FlowTime E2E Tests
+name: Deploy and Test
 
 on:
   push:
