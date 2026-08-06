@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.14.0
+**Version:** 2.15.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: habit check-in modal closes on escape key
+feat: workspace activity feed with real-time updates
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
