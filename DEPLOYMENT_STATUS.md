@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.11.0
+**Version:** 1.12.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.1%
+**Coverage:** 94.2%
 
-## Latest: fix: sidebar collapse animation on mobile viewports
+## Latest: feat: team workspace member role management UI
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
