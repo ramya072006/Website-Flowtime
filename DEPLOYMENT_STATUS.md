@@ -1,10 +1,10 @@
 # FlowTime Deployment Status
 
-**Run:** 14/43
+**Run:** 15/43
 **Status:** ✅ LIVE
 **URL:** https://ramya072006.github.io/Website-Flowtime/
 **Tests:** 470 PASSED | 0 FAILED | 100% Pass Rate
-**Commit:** feat: add performance smoke tests with Navigation Timing API
+**Commit:** fix: update report generator to include all test modules
 
 ## Test Results
 | Module | Tests | Status |
