@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.12.0
+**Version:** 1.13.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.2%
+**Coverage:** 94.3%
 
-## Latest: feat: team workspace member role management UI
+## Latest: fix: focus timer pause and resume state synchronization
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
