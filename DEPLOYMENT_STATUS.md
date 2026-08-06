@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.41.0
+**Version:** 1.42.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.1%
+**Coverage:** 94.2%
 
-## Latest: refactor: improve socket reconnection logic with backoff
+## Latest: feat: add onboarding tour for new user registration flow
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
