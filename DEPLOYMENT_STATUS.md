@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.18.0
+**Version:** 1.19.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.8%
+**Coverage:** 94.9%
 
-## Latest: feat: add keyboard shortcut overlay for power users
+## Latest: fix: notification badge count not clearing after read
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
