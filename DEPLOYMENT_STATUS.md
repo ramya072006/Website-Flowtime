@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.19.0
+**Version:** 2.20.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: notification preferences not saving correctly
+docs: add API rate limiting documentation
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
