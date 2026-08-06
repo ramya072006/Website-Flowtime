@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.10.0
+**Version:** 2.11.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-docs: document environment variables and setup steps
+fix: focus mode distraction blocker overlay z-index
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
