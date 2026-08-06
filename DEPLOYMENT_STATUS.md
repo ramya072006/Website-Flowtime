@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.26.0
+**Version:** 2.27.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-refactor: extract reusable modal component from dialogs
+feat: add task export to PDF with custom template
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
