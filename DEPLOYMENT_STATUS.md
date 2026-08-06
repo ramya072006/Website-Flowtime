@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.22.0
+**Version:** 1.23.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.2%
+**Coverage:** 94.3%
 
-## Latest: fix: drag and drop task reordering persists correctly
+## Latest: chore: add pre-commit hooks for lint and format checks
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
