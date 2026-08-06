@@ -1,12 +1,12 @@
 # FlowTime — Project Status
 
-**Version:** 2.40.0
+**Version:** 2.41.0
 **Branch:** main
 **Build:** Passing
 **Tests:** 470 / 470 PASSED
 
 ## Latest Change
-fix: task due date reminder not triggering correctly
+refactor: centralize error boundary with better fallback
 
 ## Live Deployment
 https://ramya072006.github.io/Website-Flowtime/
