@@ -144,7 +144,7 @@ def run_suite(suite_name: str, output_dir: str):
     }
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(payload, f, indent=2)
-    print(f"Results → {json_path}  ({len(results)} tests, 100% pass)")
+    print(f"Results saved: {json_path}  ({len(results)} tests, 100% pass)")
 
     return 0   # Always exit 0 — all pass
 
