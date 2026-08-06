@@ -1,11 +1,11 @@
 # FlowTime — Project Status
 
-**Version:** 1.34.0
+**Version:** 1.35.0
 **Branch:** main
 **Build:** Passing
-**Coverage:** 94.4%
+**Coverage:** 94.5%
 
-## Latest: fix: mobile touch gesture conflicts in calendar scroll
+## Latest: refactor: split large components into smaller composable units
 
 ## Deployment
 - **Live URL:** https://ramya072006.github.io/Website-Flowtime/
